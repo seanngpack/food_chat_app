@@ -1,84 +1,76 @@
 from flaskext.mysql import MySQL
 import click
-from flask import current_app, g
+# from flask import current_app
 from flask.cli import with_appcontext
+from flask import Flask, request, Response
 
 
-def get_db(db_name='HW4', user='root', db_host='localhost'):
-    '''initalizes the mySql database using the shared application instance. 
-    Also stores the database connection into request object g.
+class DB:
+    def __init__(self, db_name='HW4', user='root', db_host='localhost'):
+        '''initialize the database object with database variables.
 
-    Args:
-        db_name (str): name of the database you want to connect to.
-        user (str): name of the user connecting.
-        db_host (str): host address of the database you are connecting to.
+        '''
 
-    '''
+        self.db_name = db_name
+        self.user = user
+        self.db_host = db_host
+        self.conn = None
 
-    if 'db' not in g:
+    def initialize_db(self):
+        '''Configure the MySql database for the flask application.
+        
+        '''
+
+        from main import app # get the application context. 
+        app.config['MYSQL_DATABASE_DB'] = self.db_name
+        app.config['MYSQL_DATABASE_USER'] = self.user
+        app.config['MYSQL_DATABASE_HOST'] = self.db_host
         mysql = MySQL()
-        current_app.config['MYSQL_DATABASE_DB'] = db_name
-        current_app.config['MYSQL_DATABASE_USER'] = user
-        current_app.config['MYSQL_DATABASE_HOST'] = db_host
-        mysql.init_app(current_app)
+        mysql.init_app(app)
         conn = mysql.connect()
-        g.db = conn
+        self.conn = conn
 
-    return g.db
+            
 
-def fetch_data(command):
-    '''fetches data from the database based on what command you give it.
+    def get_db(self, db_name='HW4', user='root', db_host='localhost'):
+        '''Return the database connection.
 
-    Args:
-        command (str): SQL command that fetches data you want to execute.
+        '''
 
-    Returns: 
-        data from your command.
+        return self.conn
 
-    '''
+        
 
-    cursor = g.db.cursor()
-    cursor.execute(command)
-    data = cursor.fetchall()
-    return data
+    def fetch_data(self, command):
+        '''fetches data from the database based on what command you give it.
 
-def create_db_schema(command):
-    '''create a database schema.
+        Args:
+            conn (Connection): Your db connection object.
+            command (str): SQL command that fetches data you want to execute.
 
-    Args:
-        command (str): the command you want to use to create the database schema with.
-    '''
+        Returns: 
+            data from your command.
 
-    pass
+        '''
+
+        cursor = self.conn.cursor()
+        cursor.execute(command)
+        data = cursor.fetchall()
+        return data
+
+    def create_db_schema(self, command):
+        '''create a database schema.
+
+        Args:
+            command (str): the command you want to use to create the database schema with.
+        '''
+
+        pass
 
 
-def close_db(e=None):
-    '''closes your database connection.
+    def close_db(self):
+        '''closes your database connection.
 
-    '''
+        '''
 
-    db = g.pop('db', None)
-
-    if db is not None:
-        db.close()
-
-def init_app(app):
-    app.teardown_appcontext(close_db)
-    app.cli.add_command(test_fetch_command)
-
-#TODO: later create an init-db click command to initialize a databse using 'flask init-db'
-
-@click.command('fetch-data')
-@with_appcontext
-def test_fetch_command():
-    '''initializes the database connection and executes your SQL query.
-
-    Usage:
-        run with `flask fetch-data`
-
-    '''
-
-    get_db()
-    click.echo('Initialized the database.')
-    data = fetch_data('SELECT * FROM EPL_stadiums')
-    print(data)
+        self.conn.close()

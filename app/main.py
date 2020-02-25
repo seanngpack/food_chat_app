@@ -3,12 +3,18 @@ from flask import Flask, request, Response
 from flaskext.mysql import MySQL
 import json
 import requests
+from db import DB
 
 
 app = Flask(__name__)
 
+# set access tokens
 ACCESS_TOKEN = os.environ.get("ACCESS_TOKEN")
 VERIFY_TOKEN = os.environ.get("VERIFY_TOKEN")  # webhook verification token
+
+# initialize our database
+db = DB()
+db.initialize_db()
 
 
 @app.route('/webhook', methods=['GET'])
@@ -18,7 +24,9 @@ def handle_verification():
     '''
 
     if request.args.get('hub.verify_token') == VERIFY_TOKEN:
+        app.logger.info('webhook verification success.')
         return request.args.get('hub.challenge')
+    app.logger.info('webhook verification failed.')
     return "Wrong validation token"
 
 
@@ -54,10 +62,17 @@ def send_message(user_id, user_message):
         'recipient': {'id': user_id},
         'message': {}
     }
-    response['message']['text'] = handle_message(user_message)
-    requests.post(
-        'https://graph.facebook.com/v2.6/me/messages/?access_token=' + ACCESS_TOKEN,
-        json=response)
+    if user_message == 'fetch':
+        data = db.fetch_data('SELECT * FROM EPL_stadiums')
+        app.logger.info(data)
+        requests.post(
+            'https://graph.facebook.com/v2.6/me/messages/?access_token=' + ACCESS_TOKEN,
+            json=response)
+    else:
+        response['message']['text'] = handle_message(user_message)
+        requests.post(
+            'https://graph.facebook.com/v2.6/me/messages/?access_token=' + ACCESS_TOKEN,
+            json=response)
 
 
 def handle_message(user_message) -> str:
@@ -70,7 +85,11 @@ def handle_message(user_message) -> str:
     Returns:
         A processed message to the user.
 
-    TODO: Figure out how to map user_id to their actual names.
+    TODO:
+        1. Figure out how to use NLP 
+        2. Use output from NLP to call on a DB query
+        3. Construct DB query + statement in a helper function 
+        4. Figure out how to map user_id to their actual names.
 
     '''
     return "Hello, you just sent me : " + user_message
