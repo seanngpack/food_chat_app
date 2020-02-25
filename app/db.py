@@ -4,7 +4,7 @@ from flask import current_app, g
 from flask.cli import with_appcontext
 
 
-def init_db(db_name='HW4', user='root', db_host='localhost'):
+def get_db(db_name='HW4', user='root', db_host='localhost'):
     '''initalizes the mySql database using the shared application instance. 
     Also stores the database connection into request object g.
 
@@ -66,6 +66,8 @@ def init_app(app):
     app.teardown_appcontext(close_db)
     app.cli.add_command(test_fetch_command)
 
+#TODO: later create an init-db click command to initialize a databse using 'flask init-db'
+
 @click.command('fetch-data')
 @with_appcontext
 def test_fetch_command():
@@ -76,7 +78,7 @@ def test_fetch_command():
 
     '''
 
-    init_db()
+    get_db()
     click.echo('Initialized the database.')
     data = fetch_data('SELECT * FROM EPL_stadiums')
     print(data)
