@@ -18,10 +18,10 @@ class DB:
 
     def initialize_db(self):
         '''Configure the MySql database for the flask application.
-        
+
         '''
 
-        from main import app # get the application context. 
+        from main import app  # get the application context.
         app.config['MYSQL_DATABASE_DB'] = self.db_name
         app.config['MYSQL_DATABASE_USER'] = self.user
         app.config['MYSQL_DATABASE_HOST'] = self.db_host
@@ -29,17 +29,6 @@ class DB:
         mysql.init_app(app)
         conn = mysql.connect()
         self.conn = conn
-
-            
-
-    def get_db(self, db_name='HW4', user='root', db_host='localhost'):
-        '''Return the database connection.
-
-        '''
-
-        return self.conn
-
-        
 
     def fetch_data(self, command):
         '''fetches data from the database based on what command you give it.
@@ -63,10 +52,12 @@ class DB:
 
         Args:
             command (str): the command you want to use to create the database schema with.
+
+        TODO:
+            fill out this method
         '''
 
         pass
-
 
     def close_db(self):
         '''closes your database connection.
