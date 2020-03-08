@@ -74,3 +74,5 @@ class DB:
         '''
 
         self.conn.close()
+
+# TODO: add click command here to call create_db_schema
