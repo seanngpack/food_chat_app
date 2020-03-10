@@ -1,32 +1,69 @@
 from flaskext.mysql import MySQL
 import click
-from flask import current_app, g
+# from flask import current_app
 from flask.cli import with_appcontext
+from flask import Flask, request, Response
 
 
-def get_db():
-    if 'db' not in g:
+class DB:
+    def __init__(self, db_name='HW4', user='root', db_host='localhost'):
+        '''initialize the database object with database variables.
+
+        '''
+
+        self.db_name = db_name
+        self.user = user
+        self.db_host = db_host
+        self.conn = None
+
+    def initialize_db(self):
+        '''Configure the MySql database for the flask application.
+
+        '''
+
+        from main import app  # get the application context.
+        app.config['MYSQL_DATABASE_DB'] = self.db_name
+        app.config['MYSQL_DATABASE_USER'] = self.user
+        app.config['MYSQL_DATABASE_HOST'] = self.db_host
         mysql = MySQL()
-        # current_app.config['MYSQL_DATABASE_USER'] = 'jay'
-        # current_app.config['MYSQL_DATABASE_PASSWORD'] = 'jay'
-        current_app.config['MYSQL_DATABASE_DB'] = 'HW4'
-        current_app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+        mysql.init_app(app)
         conn = mysql.connect()
-        g.db = conn
-        g.db.cursor = conn.cursor
+        self.conn = conn
 
-    return g.db
+    def fetch_data(self, command):
+        '''fetches data from the database based on what command you give it.
 
+        Args:
+            conn (Connection): Your db connection object.
+            command (str): SQL command that fetches data you want to execute.
 
-def close_db(e=None):
-    db = g.pop('db', None)
+        Returns: 
+            data from your command.
 
-    if db is not None:
-        db.close()
+        '''
 
-def init_app(app):
-    app.teardown_appcontext(close_db)
-    # app.cli.add_command(init_db_command)
+        cursor = self.conn.cursor()
+        cursor.execute(command)
+        data = cursor.fetchall()
+        return data
 
-# TODO: missing init_db functions, implement later where the create table
-# command is in sql and the init_db calls that sql file.
+    def create_db_schema(self, command):
+        '''create a database schema.
+
+        Args:
+            command (str): the command you want to use to create the database schema with.
+
+        TODO:
+            fill out this method
+        '''
+
+        pass
+
+    def close_db(self):
+        '''closes your database connection.
+
+        '''
+
+        self.conn.close()
+
+# TODO: add click command here to call create_db_schema
