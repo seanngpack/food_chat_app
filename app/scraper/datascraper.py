@@ -1,12 +1,21 @@
 from selenium import webdriver
 import numpy
 import requests
+from requests import get
 import time
 from bs4 import BeautifulSoup
 import re
 import matplotlib.pyplot as plt; plt.rcdefaults()
 import numpy as np
 import matplotlib.pyplot as plt
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+import requests
+
+
 
 #Reminder DB REQS: rest_name, rest_cuisine, city, stars, price range, Reservations, takesCredit,URL
 # goal is to create a dictionary like:
@@ -18,7 +27,10 @@ import matplotlib.pyplot as plt
 """
 def create_db_dictionary():
     #first open up yelp and search for restaurants
-    driver = webdriver.Chrome() 
+    #driver = webdriver.Chrome()
+    #chrome_path = r'/Users/Breonna/Downloads/chromedriver' #path from 'which chromedriver'
+    #driver = webdriver.Chrome(executable_path=chrome_path)
+    driver = webdriver.Chrome('/Users/Breonna/Downloads/chromedriver') 
     driver.get('https://www.yelp.com/')
     time.sleep(5) # Let the user actually see something!
     search_box = driver.find_element_by_xpath('//*[@id="header_find_form"]/div/div[1]/div/label')
@@ -33,9 +45,12 @@ def create_db_dictionary():
     rest_url_list=[] #initiate empty restaurant list
     for item_id in range(0,len(items)): # TO DO- use try and catch to ensure there are no errors when adding to list
         if item_id >= 6: #this will ensure that the list will go below the sponsored restaurants
-            rest=driver.find_element_by_xpath(main_list+'['+ str(item_id) +']'+'/div/div/div/div[2]/div[1]/div/div[1]/div/div[1]/div/div/h4/span/a')
-            url= rest.get_attribute('href')
-            rest_url_list.append(url)
+            try:
+                rest=driver.find_element_by_xpath(main_list+'['+ str(item_id) +']'+'/div/div/div/div[2]/div[1]/div/div[1]/div/div[1]/div/div/h4/span/a')
+                url= rest.get_attribute('href')
+                rest_url_list.append(url)
+            except:
+                continue
     
     #once we have the list loop through the list to open new pages and get more info
     
@@ -51,12 +66,44 @@ def create_db_dictionary():
         name=driver.find_element_by_xpath('//*[@id="wrap"]/div[3]/div/div[1]/div[3]/div/div/div[2]/div[1]/div[1]/div/div/div[1]/h1').text
         rest_dict['name']=name #get the name of rest
         # TO DO fill rest in
-        rest_dict['stars']=0 # get stars
-        rest_dict['cuisine_tags']=cuisine_list
-        rest_dict['price_range']=0
-        rest_dict['city_name']=''
-        rest_dict['takes_reservations']=0,
-        rest_dict['takes_credit']=0,
+        try:
+            stars = str(driver.find_element_by_css_selector('div[aria-label]').get_attribute("aria-label"))
+            stars=stars.split(' ')
+            rest_dict['stars']=stars[0] # get stars
+        except:
+            rest_dict['stars'] = "None"
+        try:
+            for i in range(1,8):
+                cuisines = []
+                cuisine_list = str(driver.find_elements_by_xpath("//div/div/span/span[1]/a")[i].text)
+                if (cuisine_list != "read more"):
+                    cuisines.append(cuisine_list)
+                else:
+                    continue
+            rest_dict['cuisine_tags']=cuisines
+        except:
+            rest_dict['cuisine_tags']="None"
+        try:
+            pricerange = driver.find_element_by_xpath("//div/div/div/span/span").text
+            rest_dict['price_range']=pricerange
+        except:
+            rest_dict['price_range'] = 'None'
+        try:
+            city = driver.find_elements_by_xpath('//address/p/span')[1].text
+            city=city.split(',')
+            rest_dict['city_name']= city[0]
+        except:
+            rest_dict['city_name'] = "None"
+        try:
+            reservation = driver.find_element_by_xpath('//div/div/div[3]/div/div[2]/span[2]').text
+            rest_dict['takes_reservations']=reservation
+        except:
+            rest_dict['takes_reservations' ] = "None"
+        try:
+            credit = driver.find_element_by_xpath('//div/div[2]/span[2]').text
+            rest_dict['takes_credit']= credit
+        except:
+            rest_dict['takes_credit'] = "None"
         rest_dict['rest_url']=driver.current_url
         db_dict[uniq_counter]=rest_dict #ideally would like to create a unique id for each restaurant object added to the list
     print(db_dict)
