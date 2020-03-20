@@ -1,16 +1,14 @@
 from flaskext.mysql import MySQL
-import click
 from flask import current_app as app
-from flask.cli import with_appcontext
 from flask import Flask, request, Response
 import json
 import os
 import requests
 
 
-class ResponseHandler:
-    '''This class processes responses from the user and forms a suitable reply.
-    
+class MessageEngine:
+    '''This class processes requests from the user and forms a suitable reply.
+
     '''
 
     def __init__(self, db):
@@ -20,15 +18,15 @@ class ResponseHandler:
 
         self.db = db
 
-    def get_reply(self, response):
+    def get_reply(self, request):
         '''Processes the message and generates a reply.
 
         Args:
-            response: The JSON response
+            request: The JSON request
 
         '''
 
-        for entry in response['entry']:
+        for entry in request['entry']:
             messaging = entry['messaging']
             for message in messaging:
                 if message.get('message'):
@@ -37,8 +35,6 @@ class ResponseHandler:
                     # if the user sends you a text message
                     if message_text:
                         return self.handle_message(user_id, message_text)
-
-
 
     def handle_message(self, user_id, sent_text):
         '''Helper method to get_reply, this is where the message 

@@ -1,7 +1,5 @@
 from flaskext.mysql import MySQL
 import click
-# from flask import current_app
-from flask.cli import with_appcontext
 from flask import Flask, request, Response
 from flask import current_app as app
 
@@ -73,7 +71,6 @@ class DB:
 
         self.cursor.execute(sql, params or ())
         return self.fetchall()
-
 
     def create_db_schema(self, command):
         '''create a database schema.
