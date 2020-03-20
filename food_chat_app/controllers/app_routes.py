@@ -1,7 +1,7 @@
 from flask import Flask, request, Response
 from flask import current_app as app
-from food_chat_app.models.message_engine import MessageEngine
-from food_chat_app.models.db import DB
+from food_chat_app.models.message.message_engine import MessageEngine
+from food_chat_app.models.db.db import DB
 
 db = DB()
 message_engine = MessageEngine(db)

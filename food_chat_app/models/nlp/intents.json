@@ -1,0 +1,32 @@
+{"intents": [
+        {"intent": "restaurant_proximity_search",
+         "utterances": ["Food near me?", "What should I eat?", "I am looking for food"],
+         "responses": ["There is a cool restaurant near you at X", "You should eat at this restaurant"]
+        },
+        {"intent": "restaurant_food_type_search",
+         "utterances": ["I want to eat at a restaurant with this type of food", "Restaurant with food"],
+         "responses": ["You should eat at restaurant X", "Swag placeholder"],
+         "context": [""]
+        },
+        {"intent": "restaurant_rating_search",
+         "utterances": ["I want to eat at a highly rated restaurant"],
+         "responses": ["Restaurant X has great reviews"],
+         "context": [""]
+        },
+        {"intent": "restaurant_search_by_name",
+         "utterances": ["I want to eat at mcdonalds"],
+         "responses": ["You should go to mcdonalds"],
+         "context": [""]
+        },
+        {"intent": "restaurant_null_search",
+        "utterances": [],
+        "responses": ["Sorry, can't understand you", "Please give me more info", "Not sure I understand"],
+        "context": [""]
+        },
+        {"intent": "gratitude",
+        "utterances": ["Thanks", "Thank you", "That's helpful", "Awesome, thanks", "Thanks for helping me"],
+        "responses": ["Happy to help!", "Any time!", "My pleasure"],
+        "context": [""]
+        }
+   ]
+}
