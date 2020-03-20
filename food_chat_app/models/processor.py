@@ -7,8 +7,6 @@ import json
 import os
 import requests
 
-ACCESS_TOKEN = os.environ.get("ACCESS_TOKEN")
-
 
 class Processor:
     '''This class processes JSON responses from the user and forms a suitable reply.
@@ -81,5 +79,16 @@ class Processor:
         else:
             response['message']['text'] = "Hello, you just sent me : " + \
                 self.user_message
-            current_app.logger.info("SWAGGG")
             return response
+
+    def post_message(self, response):
+        '''Posts a message
+
+        Args:
+            response: the JSON formatted response you want to post
+
+        '''
+        requests.post(
+            'https://graph.facebook.com/v2.6/me/messages/?access_token=' +
+            current_app.config['ACCESS_TOKEN'],
+            json=response)
