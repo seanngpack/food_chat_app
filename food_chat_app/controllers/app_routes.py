@@ -1,10 +1,10 @@
 from flask import Flask, request, Response, current_app
-from food_chat_app.models.processor import Processor
+from food_chat_app.models.response_handler import ResponseHandler
 from food_chat_app.models.db import DB
 import json
 
 db = DB()
-model = Processor(db)
+response_handler = ResponseHandler(db)
 
 @current_app.route('/webhook', methods=['GET'])
 def handle_verification():
@@ -28,6 +28,6 @@ def handle_webhook():
 
     data = json.loads(request.data.decode('utf-8'))
 
-    reply = model.reply(data)
-    model.post_message(reply)
+    reply = response_handler.reply(data)
+    response_handler.post_message(reply)
     return Response(response="EVENT RECEIVED", status=200)

@@ -8,8 +8,8 @@ import os
 import requests
 
 
-class Processor:
-    '''This class processes JSON responses from the user and forms a suitable reply.
+class ResponseHandler:
+    '''This class processes responses from the user and forms a suitable reply.
     '''
 
     def __init__(self, db):
@@ -73,7 +73,7 @@ class Processor:
         }
 
         if self.user_message == 'fetch':
-            data = self.db.fetch_data('SELECT * FROM EPL_stadiums')
+            data = self.db.query('SELECT * FROM EPL_stadiums')
             response['message']['text'] = str(data)
             return response
         else:

@@ -14,24 +14,66 @@ class DB:
         '''initialize the database object with database variables.
 
         '''
-    
-        self.conn = db.connect()
-        self.cursor = self.conn.cursor()
 
-    def fetch_data(self, command):
-        '''fetches data from the database based on what command you give it.
+        self._conn = db.connect()
+        self._cursor = self._conn.cursor()
 
-        Args:
-            command (str): SQL command that fetches data you want to execute.
+    @property
+    def connection(self):
+        return self._conn
 
-        Returns: 
-            data from your command.
+    @property
+    def cursor(self):
+        return self._cursor
+
+    def commit(self):
+        '''Commit changes to the db.
 
         '''
 
-        self.cursor.execute(command)
-        data = self.cursor.fetchall()
-        return data
+        self.connection.commit()
+
+    def execute(self, sql, params=None):
+        '''Execute the sql command.
+
+        '''
+
+        self.cursor.execute(sql, params or ())
+
+    def fetchall(self):
+        '''Fetch the results from your sql command.
+
+        '''
+
+        return self.cursor.fetchall()
+
+    def fetchone(self):
+        '''Fetch just one result of your sql command.
+
+        '''
+
+        return self.cursor.fetchone()
+
+    def query(self, sql, params=None):
+        '''Execute and fetch results of your sql command. You can pass in params
+        to the SQL query, or form the params in the sql query itself. Your call.
+
+        Args:
+            sql (String): The sql query you want to run.
+            params: Any additional parameters for the query.
+
+        Returns:
+            The result of your query.
+
+        Example: 
+            sql = "SELECT * FROM transactions WHERE transaction_date = ?"
+            self.query(sql, (date,))
+
+        '''
+
+        self.cursor.execute(sql, params or ())
+        return self.fetchall()
+
 
     def create_db_schema(self, command):
         '''create a database schema.
@@ -50,6 +92,4 @@ class DB:
 
         '''
 
-        self.conn.close()
-
-# TODO: add click command here to call create_db_schema
+        self._conn.close()
