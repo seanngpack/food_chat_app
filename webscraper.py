@@ -81,7 +81,7 @@ for yelp_url in yelp_link:
     scraped_data.append(dict)
 
 dataFrame = pd.DataFrame.from_dict(scraped_data)
-dataFrame.to_csv('restaunt_data.csv',index = False)
+dataFrame.to_csv('restaurant_data.csv',index = False)
 
 
 
