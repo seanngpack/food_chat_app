@@ -36,7 +36,7 @@ def process_intents():
     classes = []
     document_map = {}
 
-    with open(dir_path + '/' + 'intents.json') as data:
+    with open(dir_path + '/data/' + 'intents.json') as data:
         intents = json.load(data)
         for intent in intents['intents']:
 
@@ -53,7 +53,8 @@ def process_intents():
 
         vocab = sorted(list(set(vocab)))
         classes = sorted(list(set(classes)))
-
+        document_map = dict(sorted(document_map.items()))
+            
         # document_map = combination between utterances and intents
         print(len(document_map), "document_map", document_map)
         # classes = intents
@@ -61,8 +62,8 @@ def process_intents():
         # words = all words, vocabulary
         print(len(vocab), "unique lemmatized words", vocab)
 
-        pickle.dump(vocab, open(dir_path + '/' + 'vocab.pkl', 'wb'))
-        pickle.dump(classes, open(dir_path + '/' + '/classes.pkl', 'wb'))
+        pickle.dump(vocab, open(dir_path + '/data/' + 'vocab.pkl', 'wb'))
+        pickle.dump(classes, open(dir_path + '/data/' + 'classes.pkl', 'wb'))
 
         return vocab, classes, document_map
 
@@ -127,4 +128,4 @@ def build_dl_model(training):
                   optimizer=sgd, metrics=['accuracy'])
 
     hist = model.fit(train_X, train_y, epochs=200, batch_size=5, verbose=1)
-    model.save(dir_path + '/' + 'nlp_model.h5', hist)
+    model.save(dir_path + '/data/' + 'nlp_model.h5', hist)
