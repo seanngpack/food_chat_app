@@ -1,20 +1,20 @@
 {"intents": [
         {"intent": "restaurant_proximity_search",
-         "utterances": ["Food near me?", "What should I eat?", "I am looking for food"],
+         "utterances": ["Food near me?", "restaurant nearby", "restaurants close to me", "What should I eat that is nearby?", "I am looking for food close to me"],
          "responses": ["There is a cool restaurant near you at X", "You should eat at this restaurant"]
         },
         {"intent": "restaurant_food_type_search",
-         "utterances": ["I want to eat at a restaurant with this type of food", "Restaurant with food"],
+         "utterances": ["I want to eat Chinese food", "I want to eat restaurant with specific food type"],
          "responses": ["You should eat at restaurant X", "Swag placeholder"],
          "context": [""]
         },
         {"intent": "restaurant_rating_search",
-         "utterances": ["I want to eat at a highly rated restaurant"],
+         "utterances": ["I want to eat at a highly rated restaurant", "highly rated restaurants", "Any good reviewed restaurants?"],
          "responses": ["Restaurant X has great reviews"],
          "context": [""]
         },
         {"intent": "restaurant_search_by_name",
-         "utterances": ["I want to eat at mcdonalds"],
+         "utterances": ["I want to eat at mcdonalds", "Search restaurant by name"],
          "responses": ["You should go to mcdonalds"],
          "context": [""]
         },

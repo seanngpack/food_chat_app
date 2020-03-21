@@ -25,7 +25,8 @@ def run():
 
 
 def process_intents():
-    '''Creates the vocab & classes lists and the document_map dict
+    '''Creates the vocab & classes lists and the document_map dict.
+    Also pickles the vocab and classes list to be used later in our model.
 
     Returns:
         vocab, classes, document_map
@@ -99,7 +100,7 @@ def build_training_set(vocab, classes, document_map):
 
 
 def build_dl_model(training):
-    '''Build the DL model using our training set.
+    '''Build and save the DL model using our training set.
     layer 1: 128 neurons, relu
     layer 2: 64 neurons, relu
     layer 3: # neurons = output shape (# of labels), softmax
@@ -113,6 +114,9 @@ def build_dl_model(training):
     train_y = list(training[:, 1])
 
     train_X = np.array(train_X)
+
+
+    
     train_y = np.array(train_y)
 
     model = Sequential()

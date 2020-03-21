@@ -25,9 +25,9 @@ class Predictor:
         self.classes = pickle.load(open(dir_path + '/data/' + 'classes.pkl','rb'))
 
     def predict_intent(self, sentence):
-        tokenized_sentence = utils.sentence_to_bow_vector(sentence, self.vocab)
+        bow_sentence = utils.sentence_to_bow_vector(sentence, self.vocab)
         
-        result = self.nlp_model.predict(tokenized_sentence.reshape(1, -1))
+        result = self.nlp_model.predict(bow_sentence.reshape(1, -1))
 
         print(result[0])
         print(self.classes)
