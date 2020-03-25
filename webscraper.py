@@ -8,18 +8,6 @@ from requests.exceptions import RequestException
 from contextlib import closing
 import re
 
-# for link in soup.select('span span a'):
-#     print(link.string)
-
-#PSEUDOCODE
-#get all links to yelp 
-#go inside each link
-#inside each link, gather information
-#...for link in list:..
-#get information needed
-#append to dictionary
-
-
 #create a list to store the scraped data
 scraped_data = []
 
@@ -80,25 +68,36 @@ for yelp_url in yelp_link:
 
     #get reservation info
     try:
-        reserve = newsoup.select('div > div > div:nth-child(3) > div > div:nth-child(2) > span')[1].text
-        reserve = reserve.strip()
-        if re.match('^Yes|No|$', reserve) or re.match('^Yes|No|$',reserve):
-            reservation = reserve
+        #for i in range(0,12):
+        reserve = newsoup.find_all('#expander-link-content-b6bc3146-0a7c-48e2-9011-3676ef9ba8da > div > div>div>div')[1].text
+        print(reserve)
+        # reserve = reserve.strip()
+        # if re.match('^Yes|No|$', reserve) or re.match('^Yes|No|$',reserve):
+        #     reservation = reserve
 
     except:
         reservation = "None"
     
     #get credit card info
     try:
-        credit = newsoup.select('div > div:nth-child(2) > span:nth-child(2)')[0].text
-        credit = credit.strip()
-        if re.match('^Yes|No|$', credit) or re.match('^Yes|No|$',credit):
-            creditcard = credit
+        credit = newsoup.select('div > div > div:nth-child(6) > div > div:nth-child > span')[2].text
+        print(credit)
+        # credit = credit.strip()
+        # if re.match('^Yes|No|$', credit) or re.match('^Yes|No|$',credit):
+        #     creditcard = credit
 
     except:
         creditcard = "None"
 
-    #get takeout information 
+    #get takeout information
+    try:
+        take = newsoup.select('div > div > div:nth-child(5) > div > div:nth-child(2) > span')[1].text
+        take = take.strip()
+        if re.match('^Yes|No|$', take) or re.match('^Yes|No|$',take):
+            takeout = take
+
+    except:
+        takeout = "None"
    
     #get website of restaurant
     try:
@@ -106,18 +105,72 @@ for yelp_url in yelp_link:
     except:
         restwebsite = "None"
 
+
+    #get monday hours
+    try:
+        mondayhours = newsoup.select('tbody > tr:nth-child(1)>td:nth-child(2)')[0].text
+    except:
+        mondayhours = "None"
+    
+    #get tuesday hours
+    try:
+        tuesdayhours = newsoup.select('tbody > tr:nth-child(2)>td:nth-child(2)')[0].text
+    except:
+        tuesdayhours = "None"
+    
+
+    #get wednesday hours
+    try:
+        wednesdayhours = newsoup.select('tbody > tr:nth-child(3)>td:nth-child(2)')[0].text
+    except:
+        wednesdayhours = "None"
+    
+    #get thursday hours
+    try:
+        thursdayhours = newsoup.select('tbody > tr:nth-child(4)>td:nth-child(2)')[0].text
+    except:
+        thursdayhours = "None"
+
+    #get friday hours
+    try:
+        fridayhours = newsoup.select('tbody > tr:nth-child(5)>td:nth-child(2)')[0].text
+    except:
+        fridayhours = "None"
+    
+
+    #get wednesday hours
+    try:
+        saturdayhours = newsoup.select('tbody > tr:nth-child(6)>td:nth-child(2)')[0].text
+    except:
+        saturdayhours = "None"
+    
+    #get thursday hours
+    try:
+        sundayhours = newsoup.select('tbody > tr:nth-child(7)>td:nth-child(2)')[0].text
+    except:
+        sundayhours = "None"
+
     #add data to the dictionary
     dict['restaurant_name'] = name
     dict['city'] = city
-    dict['starrating'] = starrating
+    dict['star_rating'] = starrating
     dict['pricerange'] = pricerange
-    dict['reservation'] = reservation
-    dict['creditcard'] = creditcard
-    #dict['takeout'] = takeout
-    dict['restaurant website'] = restwebsite   
+    #dict['reservation'] = reservation
+    dict['credit_card'] = creditcard
+    dict['takeout'] = takeout
+    dict['restaurant_website'] = restwebsite   
+    dict['monday_hours'] = mondayhours
+    dict['tuesday_hours'] = tuesdayhours
+    dict['wednesday_hours']=wednesdayhours
+    dict['thursday_hours'] = thursdayhours
+    dict['friday_hours'] = fridayhours
+    dict['saturday_hours'] = saturdayhours
+    dict['sunday_hours'] = sundayhours
 
     #append the scraped data to the list
     scraped_data.append(dict)
+
+
 
 dataFrame = pd.DataFrame.from_dict(scraped_data)
 dataFrame.to_csv('restaurant_data.csv',index = False)
