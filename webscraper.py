@@ -53,29 +53,68 @@ for yelp_url in yelp_link:
 
     #get city
     try: 
-        city = newsoup.select('address > p:nth-child(2) > span')[0].text
-        city = city.split(',')
-        city = city[0]
+        cityname = newsoup.select('address > p:nth-child(2) > span')[0].text
+        cityname = cityname.split(',')
+        cityname = cityname[0]
+        if re.match("^\S+$", cityname):
+            city = cityname
     except:
         city = "None"
 
+    #get star rating 
+    try:
+        stars= newsoup.find(class_ = re.compile("i-star"))['aria-label']
+        stars = str(stars)
+        stars = stars.split(' ')
+        starrating = stars[0]
+    except:
+        starrating = "None"
+
     #get dollar signs
     try:
-        pricerange = newsoup.select('div > div > span:nth-child(3) > span')[0].text
+        price = newsoup.select('div > div > span:nth-child(3) > span')[0].text
+        if re.match("^\$", str(price)):
+            pricerange = price
     except:
         pricerange = "None"
 
-    #get reservation 
+    #get reservation info
     try:
-        reservation = newsoup.select('div > div > div:nth-child(3) > div > div:nth-child(2) > span')[1].text
+        reserve = newsoup.select('div > div > div:nth-child(3) > div > div:nth-child(2) > span')[1].text
+        reserve = reserve.strip()
+        if re.match('^Yes|No|$', reserve) or re.match('^Yes|No|$',reserve):
+            reservation = reserve
+
     except:
         reservation = "None"
+    
+    #get credit card info
+    try:
+        credit = newsoup.select('div > div:nth-child(2) > span:nth-child(2)')[0].text
+        credit = credit.strip()
+        if re.match('^Yes|No|$', credit) or re.match('^Yes|No|$',credit):
+            creditcard = credit
+
+    except:
+        creditcard = "None"
+
+    #get takeout information 
+   
+    #get website of restaurant
+    try:
+        restwebsite = newsoup.select('div > div > p:nth-child(2) > a')[0].text
+    except:
+        restwebsite = "None"
 
     #add data to the dictionary
     dict['restaurant_name'] = name
     dict['city'] = city
+    dict['starrating'] = starrating
     dict['pricerange'] = pricerange
     dict['reservation'] = reservation
+    dict['creditcard'] = creditcard
+    #dict['takeout'] = takeout
+    dict['restaurant website'] = restwebsite   
 
     #append the scraped data to the list
     scraped_data.append(dict)
