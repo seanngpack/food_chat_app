@@ -51,7 +51,7 @@ for yelp_url in yelp_link:
 
     #get star rating 
     try:
-        stars= newsoup.find(class_ = re.compile("i-star"))['aria-label']
+        stars= newsoup.find(class_ = re.compile("i-stars--large"))['aria-label']
         stars = str(stars)
         stars = stars.split(' ')
         starrating = stars[0]
@@ -68,12 +68,15 @@ for yelp_url in yelp_link:
 
     #get reservation info
     try:
-        #for i in range(0,12):
-        reserve = newsoup.find_all('#expander-link-content-b6bc3146-0a7c-48e2-9011-3676ef9ba8da > div > div>div>div')[1].text
-        print(reserve)
-        # reserve = reserve.strip()
-        # if re.match('^Yes|No|$', reserve) or re.match('^Yes|No|$',reserve):
-        #     reservation = reserve
+        r = newsoup.find_all('div', class_ = re.compile("lemon--div__373c0__1mboc arrange-unit__373c0__1piwO arrange-unit-fill__373c0__17z0h border-color--default__373c0__2oFDT"))
+        for m in r:
+            amenities = m.text
+            if re.findall("Takes Reservation",str(amenities)):
+                reserve = amenities
+                reserve = reserve.split('\xa0')
+                reserve = reserve[-1]
+                if re.match('^Yes|No|$', reserve) or re.match('^Yes|No|$',reserve):
+                    reservation = reserve
 
     except:
         reservation = "None"
@@ -155,9 +158,9 @@ for yelp_url in yelp_link:
     dict['city'] = city
     dict['star_rating'] = starrating
     dict['pricerange'] = pricerange
-    #dict['reservation'] = reservation
-    dict['credit_card'] = creditcard
-    dict['takeout'] = takeout
+    dict['reservation'] = reservation
+    #dict['credit_card'] = creditcard
+    #dict['takeout'] = takeout
     dict['restaurant_website'] = restwebsite   
     dict['monday_hours'] = mondayhours
     dict['tuesday_hours'] = tuesdayhours
