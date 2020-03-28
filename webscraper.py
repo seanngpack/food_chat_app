@@ -7,6 +7,12 @@ from requests import get
 from requests.exceptions import RequestException
 from contextlib import closing
 import re
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+
 
 #create a list to store the scraped data
 scraped_data = []
@@ -30,14 +36,43 @@ for yelp_url in yelp_link:
     #initialize dictionary
     dict = {}
 
-    newpage = requests.get(yelp_url, timeout = 15)
-    newsoup = BeautifulSoup(newpage.content, 'html.parser')  
-    
+ #################################################################################   
+    ##options = webdriver.Chrome('/Users/Breonna/Downloads/chromedriver') 
+
+    #UNCOMMENT BELOW IF USING Selenium AND BS
+    #Using Selenium to select "more attributes" button
+
+    # options = webdriver.ChromeOptions()
+    # options.add_argument('--ignore-certificate-errors')
+    # options.add_argument('--incognito')
+    # options.add_argument('--headless')
+    # driver = webdriver.Chrome("/Users/Breonna/Downloads/chromedriver", chrome_options=options)
+
+    # driver.get(yelp_url)
+    # try:
+    #     more_buttons = driver.find_elements_by_css_selector("section>div>a")
+    #     for x in range(len(more_buttons)):
+    #         if more_buttons[x].is_displayed():
+    #             driver.execute_script("arguments[0].click();", more_buttons[x])
+    #             time.sleep(1)
+    # except: 
+    #     continue
+    # page_source = driver.page_source 
+
+    # newsoup = BeautifulSoup(page_source, 'html.parser') 
+##################################################################################
+
+    #UNCOMMENT BELOW IF USING ONLY BEAUTIFULSOUP
+
+    newpage = requests.get(yelp_url, timeout = 25)
+    newsoup = BeautifulSoup(newpage.content, 'html.parser') 
+##################################################################################
+
     #get name of restaurant
     try:
         name = newsoup.select('div > div > div:nth-child(1) > h1')[0].text
     except:
-        name = "None"
+        name = "Null"
 
     #get city
     try: 
@@ -47,7 +82,7 @@ for yelp_url in yelp_link:
         if re.match("^\S+$", cityname):
             city = cityname
     except:
-        city = "None"
+        city = "Null"
 
     #get star rating 
     try:
@@ -56,7 +91,7 @@ for yelp_url in yelp_link:
         stars = stars.split(' ')
         starrating = stars[0]
     except:
-        starrating = "None"
+        starrating = "Null"
 
     #get dollar signs
     try:
@@ -64,7 +99,7 @@ for yelp_url in yelp_link:
         if re.match("^\$", str(price)):
             pricerange = price
     except:
-        pricerange = "None"
+        pricerange = "Null"
 
     #get reservation info
     try:
@@ -79,79 +114,88 @@ for yelp_url in yelp_link:
                     reservation = reserve
 
     except:
-        reservation = "None"
+        reservation = "Null"
     
-    #get credit card info
+    #get vegan option info
     try:
-        credit = newsoup.select('div > div > div:nth-child(6) > div > div:nth-child > span')[2].text
-        print(credit)
-        # credit = credit.strip()
-        # if re.match('^Yes|No|$', credit) or re.match('^Yes|No|$',credit):
-        #     creditcard = credit
+        v = newsoup.find_all('div', class_ = re.compile("lemon--div__373c0__1mboc arrange-unit__373c0__1piwO arrange-unit-fill__373c0__17z0h border-color--default__373c0__2oFDT"))
+        for m in v:
+            amenities = m.text
+            if re.findall("Vegan Option",str(amenities)):
+                veg = amenities
+                veg = veg.split('\xa0')
+                veg = veg[-1]
+                if re.match('^Yes|No|$', veg) or re.match('^Yes|No|$', veg):
+                    vegan = veg
+
+    except:     
+        vegan = "Null"
+
+    #get delivery information
+    try:
+        d = newsoup.find_all('div', class_ = re.compile("lemon--div__373c0__1mboc arrange-unit__373c0__1piwO arrange-unit-fill__373c0__17z0h border-color--default__373c0__2oFDT"))
+        for m in d:
+            amenities = m.text
+            if re.findall("Offers delivery",str(amenities)):
+                deliv = amenities
+                deliv = deliv.split('\xa0')
+                deliv = deliv[-1]
+                if re.match('^Yes|No|$', deliv) or re.match('^Yes|No|$', deliv):
+                    delivery= deliv
 
     except:
-        creditcard = "None"
-
-    #get takeout information
-    try:
-        take = newsoup.select('div > div > div:nth-child(5) > div > div:nth-child(2) > span')[1].text
-        take = take.strip()
-        if re.match('^Yes|No|$', take) or re.match('^Yes|No|$',take):
-            takeout = take
-
-    except:
-        takeout = "None"
+        delivery = "Null"
    
     #get website of restaurant
     try:
         restwebsite = newsoup.select('div > div > p:nth-child(2) > a')[0].text
     except:
-        restwebsite = "None"
+        restwebsite = "Null"
 
 
     #get monday hours
     try:
         mondayhours = newsoup.select('tbody > tr:nth-child(1)>td:nth-child(2)')[0].text
     except:
-        mondayhours = "None"
+        mondayhours = "Null"
     
     #get tuesday hours
     try:
         tuesdayhours = newsoup.select('tbody > tr:nth-child(2)>td:nth-child(2)')[0].text
     except:
-        tuesdayhours = "None"
+        tuesdayhours = "Null"
     
 
     #get wednesday hours
     try:
         wednesdayhours = newsoup.select('tbody > tr:nth-child(3)>td:nth-child(2)')[0].text
     except:
-        wednesdayhours = "None"
+        wednesdayhours = "Null"
     
     #get thursday hours
     try:
         thursdayhours = newsoup.select('tbody > tr:nth-child(4)>td:nth-child(2)')[0].text
     except:
-        thursdayhours = "None"
+        thursdayhours = "Null"
 
     #get friday hours
     try:
         fridayhours = newsoup.select('tbody > tr:nth-child(5)>td:nth-child(2)')[0].text
     except:
-        fridayhours = "None"
+        fridayhours = "Null"
     
 
     #get wednesday hours
     try:
         saturdayhours = newsoup.select('tbody > tr:nth-child(6)>td:nth-child(2)')[0].text
     except:
-        saturdayhours = "None"
+        saturdayhours = "Null"
     
     #get thursday hours
     try:
         sundayhours = newsoup.select('tbody > tr:nth-child(7)>td:nth-child(2)')[0].text
     except:
-        sundayhours = "None"
+        sundayhours = "Null"
 
     #add data to the dictionary
     dict['restaurant_name'] = name
@@ -159,9 +203,9 @@ for yelp_url in yelp_link:
     dict['star_rating'] = starrating
     dict['pricerange'] = pricerange
     dict['reservation'] = reservation
-    #dict['credit_card'] = creditcard
-    #dict['takeout'] = takeout
-    dict['restaurant_website'] = restwebsite   
+    dict['vegan_option'] = vegan
+    dict['delivery_option'] = delivery
+    dict['restaurant_website'] = restwebsite
     dict['monday_hours'] = mondayhours
     dict['tuesday_hours'] = tuesdayhours
     dict['wednesday_hours']=wednesdayhours
