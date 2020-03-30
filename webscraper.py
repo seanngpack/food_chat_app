@@ -225,7 +225,7 @@ def create_dict(yelplink_list):
 
             #gets all the dishes on the menu
             menudish = ', '.join(map(str,dish_list))
-            print(menudish)
+            #print(menudish)
             dishes = menudish
 
 
