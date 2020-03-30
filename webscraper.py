@@ -7,7 +7,7 @@ from requests import get
 from requests.exceptions import RequestException
 from contextlib import closing
 import re
-from webdriver_manager.chrome import ChromeDriverManager
+#from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -152,6 +152,17 @@ for yelp_url in yelp_link:
     except:
         restwebsite = "Null"
 
+    #get cusine type of restaurant 
+    try:
+        c = []
+        ctype = newsoup.select("div > div > span > span > a")
+        for a in ctype:
+            c.append(a.text)
+        cusine = ', '.join(map(str,c))
+        cusinetype = cusine
+            
+    except:
+        cusinetype = "Null"
 
     #get monday hours
     try:
@@ -197,6 +208,31 @@ for yelp_url in yelp_link:
     except:
         sundayhours = "Null"
 
+
+    #get popular dishes
+    try:
+        dish_list = []
+        p = newsoup.find_all('p', class_ = re.compile("lemon--p__373c0__3Qnnj text__373c0__2pB8f text-color--normal__373c0__K_MKN text-align--left__373c0__2pnx_ text-weight--bold__373c0__3HYJa text--truncated__373c0__3IHqb"))
+        #prints out popular dishes
+        # for dish in p:
+        #     print(dish.text)
+        m = newsoup.select("div > div:nth-child(4) > div > div.lemon--div__373c0__1mboc.arrange-unit__373c0__1piwO.arrange-unit-fill__373c0__17z0h.border-color--default__373c0__2oFDT > p > a")[0]
+        menuURL = "https://yelp.com"+ m['href']
+        menupage = requests.get(menuURL, timeout = 25)
+        menusoup = BeautifulSoup(menupage.content, 'html.parser') 
+
+        dish = menusoup.select("h4")
+        for d in dish:
+            #print(d.text.strip())
+            dish_list.append(d.text.strip())
+
+        menudish = ', '.join(map(str,dish_list))
+        print(menudish)
+        dishes = menudish
+
+    except:
+        dishes = "Null"
+
     #add data to the dictionary
     dict['restaurant_name'] = name
     dict['city'] = city
@@ -206,6 +242,7 @@ for yelp_url in yelp_link:
     dict['vegan_option'] = vegan
     dict['delivery_option'] = delivery
     dict['restaurant_website'] = restwebsite
+    dict['cusine_types'] = cusinetype
     dict['monday_hours'] = mondayhours
     dict['tuesday_hours'] = tuesdayhours
     dict['wednesday_hours']=wednesdayhours
@@ -213,6 +250,7 @@ for yelp_url in yelp_link:
     dict['friday_hours'] = fridayhours
     dict['saturday_hours'] = saturdayhours
     dict['sunday_hours'] = sundayhours
+    dict['menu_dishes'] = dishes
 
     #append the scraped data to the list
     scraped_data.append(dict)
