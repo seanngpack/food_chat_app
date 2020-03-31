@@ -1,6 +1,7 @@
 import json
 from tensorflow.keras.models import load_model
 from food_chat_app.models.nlp import utils
+from food_chat_app.models.nlp.intent_types import IntentType
 import numpy as np
 import os
 import pickle
@@ -39,4 +40,4 @@ class Predictor:
             if result[0][i]*100 > max:
                 max = result[0][i]
                 index = i
-        return self.classes[index]
+        return IntentType(self.classes[index])

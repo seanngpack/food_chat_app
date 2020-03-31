@@ -37,7 +37,7 @@ class MessageEngine:
                         return user_id, message_text
                         # return self.handle_message(user_id, message_text)
 
-    def handle_message(self, user_id, sent_text):
+    def handle_message(self, user_id, intent, entity = None):
         '''given a user_id, intent, and entity, run a SQL query to retreieve the data
         and create a reply for the user.
 
@@ -51,13 +51,13 @@ class MessageEngine:
             'message': {}
         }
 
-        if sent_text == 'fetch':
+        if intent == 'fetch':
             data = self.db.query('SELECT * FROM EPL_stadiums')
             response['message']['text'] = str(data)
             return response
         else:
             response['message']['text'] = "Hello, you're probably looking for: " + \
-                sent_text
+                intent
             return response
 
     def post_message(self, response):
