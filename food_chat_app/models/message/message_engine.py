@@ -17,8 +17,9 @@ class MessageEngine:
         '''
 
         self.db = db
+        self.strategy = None
 
-    def get_reply(self, request):
+    def parse_user_message(self, request):
         '''Processes the message and generates a reply.
 
         Args:
@@ -34,11 +35,11 @@ class MessageEngine:
                     message_text = message['message'].get('text')
                     # if the user sends you a text message
                     if message_text:
-                        return self.handle_message(user_id, message_text)
+                        return user_id, message_text
+                        # return self.handle_message(user_id, message_text)
 
-    def handle_message(self, user_id, sent_text):
-        '''Helper method to get_reply, this is where the message 
-        is broken down and interpreted.
+    def get_reply(self, user_id, entity=None):
+        '''Run strategy and get a response to the user.
 
         TODO:
             Add beef to this function, NLP, whatever.
@@ -50,14 +51,8 @@ class MessageEngine:
             'message': {}
         }
 
-        if sent_text == 'fetch':
-            data = self.db.query('SELECT * FROM EPL_stadiums')
-            response['message']['text'] = str(data)
-            return response
-        else:
-            response['message']['text'] = "Hello, you just sent me : " + \
-                sent_text
-            return response
+        response['message']['text'] = self.strategy.execute(entity)
+        return response
 
     def post_message(self, response):
         '''Posts a message.
@@ -70,3 +65,10 @@ class MessageEngine:
             'https://graph.facebook.com/v2.6/me/messages/?access_token=' +
             app.config['ACCESS_TOKEN'],
             json=response)
+
+    def set_strategy(self, strategy):
+        ''' given a strategy, set the strategy of this class 
+
+        '''
+
+        self.strategy = strategy
