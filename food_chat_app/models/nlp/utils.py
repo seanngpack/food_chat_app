@@ -9,10 +9,11 @@ lemmatizer = nltk.WordNetLemmatizer()
 
 
 def sentence_to_bow_vector(sentence, vocab):
-    '''Given a sentence and vocab, create a bag of words vector
+    '''Given a sentence and vocab, create a bag of words vector.
+    This disregards frequency counts.
 
     Example:
-        sentence = "hey dog cool new"
+        sentence = "hey dog cool cool new"
         vocab = ['hey', 'cool', 'lol']
         bag_vector = np.array(1, 1, 0)
 
