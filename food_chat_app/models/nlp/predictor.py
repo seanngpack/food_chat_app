@@ -1,5 +1,5 @@
 import json
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 from food_chat_app.models.nlp import utils
 import numpy as np
 import os
@@ -29,8 +29,14 @@ class Predictor:
         
         result = self.nlp_model.predict(bow_sentence.reshape(1, -1))
 
-        print(result[0])
-        print(self.classes)
+        # print(result[0])
+        max = 0
+        index = 0
+        # print(self.classes)
         for i in range(0, result[0].size):
-            print("intent:" + str(self.classes[i]) + " -- " +
-             str(np.around(result[0][i]* 100, decimals=2)) + '%')
+            # print("intent:" + str(self.classes[i]) + " -- " +
+            #  str(np.around(result[0][i]* 100, decimals=2)) + '%')
+            if result[0][i]*100 > max:
+                max = result[0][i]
+                index = i
+        return self.classes[index]
