@@ -1,7 +1,13 @@
+from food_chat_app.models.nlp.entity import NamedEntityChunker
 import nltk
+from nltk.chunk import conlltags2tree, tree2conlltags
 import numpy as np
+import os
+import pprint
 
 lemmatizer = nltk.WordNetLemmatizer()
+path = os.path.abspath(__file__)
+dir_path = os.path.dirname(path)
 
 # TODO: later I can add a named entity recognizer to pull
 # entities from the user query so they can be used in the SQL
@@ -9,17 +15,18 @@ lemmatizer = nltk.WordNetLemmatizer()
 
 
 def sentence_to_bow_vector(sentence, vocab):
-    '''Given a sentence and vocab, create a bag of words vector
+    '''Given a sentence and vocab, create a bag of words vector.
+    This disregards frequency counts.
 
     Example:
-        sentence = "hey dog cool new"
+        sentence = "hey dog cool cool new"
         vocab = ['hey', 'cool', 'lol']
         bag_vector = np.array(1, 1, 0)
 
     '''
 
     seen = []
-    words = process_sentence(sentence)
+    words = tokenize_sentence(sentence)
     bag_vector = np.zeros(len(vocab))
     for w in words:
         for i, word in enumerate(vocab):
@@ -29,7 +36,7 @@ def sentence_to_bow_vector(sentence, vocab):
     return bag_vector
 
 
-def process_sentence(sentence: str):
+def tokenize_sentence(sentence: str):
     '''Tokenize and lemmatize sentence. Lemmatize uses parts of speech tags
     for better lemmetization accuracy. Does not remove stop words from the sentence,
     but I should experiment to see if that impacts performance. Also see what happens
@@ -46,6 +53,33 @@ def process_sentence(sentence: str):
     lemmatized_tokens = list(map(lemmatize_word, cleaned_tokens))
 
     return lemmatized_tokens
+
+def extract_entity(sentence: str):
+    chunker = NamedEntityChunker()
+
+    chunked = chunker.parse(nltk.pos_tag(nltk.word_tokenize(sentence)))
+    return chunked
+
+
+def get_named_entity(chunked):
+    '''Given a chunk, get the FIRST labeled chunk, if a labeled chunk
+    doesn't exist then get a NNP proper noun, if that doesn't exist
+    then return None
+
+    ex. (geo Germany/NNP) -> Germany
+
+    '''
+
+    backup = ''
+    for chunk in chunked:
+        if hasattr(chunk, 'label'):
+        #  print(chunk.label(), ' '.join(c[0] for c in chunk))
+            return chunk[0][0]
+        elif chunk[1] == 'NNP':
+            backup=chunk[0]
+    return backup
+
+
 
 
 def lemmatize_word(word):
@@ -80,3 +114,4 @@ def get_pos(word):
                 "R": nltk.corpus.wordnet.ADV}
 
     return tag_dict.get(tag, nltk.corpus.wordnet.NOUN)
+

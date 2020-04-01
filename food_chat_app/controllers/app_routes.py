@@ -5,6 +5,7 @@ from food_chat_app.models.db.db import DB
 from food_chat_app.models.nlp.predictor import Predictor
 from food_chat_app.models.nlp.intent_types import IntentType
 from food_chat_app.models.nlp.intent_strategy import *
+from food_chat_app.models.nlp import utils
 
 db = DB()
 message_engine = MessageEngine(db)
@@ -36,12 +37,18 @@ def handle_webhook():
         user_id, user_message = message_engine.parse_user_message(
             request_object)
 
+        # get a named entity from the message
+        chunked = utils.extract_entity(user_message)
+        entity = utils.get_named_entity(chunked)
+
         # predict the user intent
         intentType = predictor.predict_intent(user_message)
+
         # get the intent and set the strategy of the MessageEngine
         message_engine.set_strategy(intentToStrat(intentType))
+        
         # get a reply to the user message
-        reply = message_engine.get_reply(user_id, intentType)
+        reply = message_engine.get_reply(user_id, entity)
         message_engine.post_message(reply)
         return Response(response="EVENT RECEIVED", status=200)
     return Response(response="EVENT RECEIVED", status=200)

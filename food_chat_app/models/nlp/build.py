@@ -49,7 +49,7 @@ def process_intents():
 
             for utterance in intent['utterances']:
                 # tokenize utterance and add to vocab
-                u_tokens = utils.process_sentence(utterance)
+                u_tokens = utils.tokenize_sentence(utterance)
                 vocab.extend(u_tokens)
 
         vocab = sorted(list(set(vocab)))
