@@ -7,32 +7,32 @@ class IntentStrategy(metaclass=abc.ABCMeta):
 
 class ProximityStrategy(IntentStrategy):
     def execute(self, entity):
-        print('proximity search')
-        return 'proximity search'
+        print('proximity search' + entity)
+        return 'proximity search ' + entity
 
 
 class FoodTypeStrategy(IntentStrategy):
     def execute(self, entity):
-        print('food type search')
-        return 'food type search'
+        print('food type search' + entity)
+        return 'food type search ' + entity
 
 
 class RatingStrategy(IntentStrategy):
     def execute(self, entity):
-        print('rating search')
-        return 'rating search'
+        print('rating search' + entity)
+        return 'rating search ' + entity
 
 class NameStrategy(IntentStrategy):
     def execute(self, entity):
-        print('name search')
-        return 'name search'
+        print('name search' + entity)
+        return 'name search ' + entity
 
 class NullStrategy(IntentStrategy):
     def execute(self, entity):
-        print('null search')
-        return 'null search'
+        print('null search' + entity)
+        return 'null search ' + entity
 
 class GratitudeStrategy(IntentStrategy):
     def execute(self, entity):
-        print('gratitude')
-        return 'gratitude'
+        print('gratitude' + entity)
+        return 'gratitude ' + entity
