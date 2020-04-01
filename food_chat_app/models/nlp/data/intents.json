@@ -1,32 +1,27 @@
 {"intents": [
         {"intent": "restaurant_proximity_search",
-         "utterances": ["Food near me?", "restaurant nearby", "restaurants close to me", "What should I eat that is nearby?", "I am looking for food close to me"],
-         "responses": ["There is a cool restaurant near you at X", "You should eat at this restaurant"]
+         "utterances": ["Food near me?", "restaurant nearby", "restaurants close to me", "What should I eat that is nearby?", "I am looking for food close to me"]
         },
         {"intent": "restaurant_food_type_search",
-         "utterances": ["I want to eat Chinese food", "I want to eat restaurant with specific food type"],
-         "responses": ["You should eat at restaurant X", "Swag placeholder"],
-         "context": [""]
+         "utterances": ["I want to eat Chinese food", "I want to eat French food", "Chinese restaurants", "American restaurants", "Italian restaurants",
+                        "I want to eat restaurant with specific food type"]
         },
         {"intent": "restaurant_rating_search",
-         "utterances": ["I want to eat at a highly rated restaurant", "highly rated restaurants", "Any good reviewed restaurants?"],
-         "responses": ["Restaurant X has great reviews"],
-         "context": [""]
+         "utterances": ["I want to eat at a highly rated restaurant", "highly rated restaurants", "Any good reviewed restaurants?",
+                        "Best reviewed restaurants", "Best rated restaurants"]
         },
         {"intent": "restaurant_search_by_name",
-         "utterances": ["I want to eat at mcdonalds", "Search restaurant by name"],
-         "responses": ["You should go to mcdonalds"],
-         "context": [""]
+         "utterances": ["I want to eat at mcdonalds", "Search restaurant by name", "I want to eat at Five Guys", "I want to eat at Starbucks"]
         },
+        {"intent": "restaurant_random_search",
+                "utterances": ["I don't know what to eat", "Where should I go to eat", "I am not sure what I should eat",
+                                "Any recommendations where I should eat?"]
+               },
         {"intent": "restaurant_null_search",
-        "utterances": [],
-        "responses": ["Sorry, can't understand you", "Please give me more info", "Not sure I understand"],
-        "context": [""]
+        "utterances": []
         },
         {"intent": "gratitude",
-        "utterances": ["Thanks", "Thank you", "That's helpful", "Awesome, thanks", "Thanks for helping me"],
-        "responses": ["Happy to help!", "Any time!", "My pleasure"],
-        "context": [""]
+        "utterances": ["Thanks", "Thank you", "That's helpful", "Awesome, thanks", "Thanks for helping me", "cool"]
         }
    ]
 }

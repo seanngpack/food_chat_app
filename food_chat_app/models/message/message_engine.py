@@ -41,9 +41,6 @@ class MessageEngine:
     def get_reply(self, user_id, entity=None):
         '''Run strategy and get a response to the user.
 
-        TODO:
-            Add beef to this function, NLP, whatever.
-
         '''
 
         response = {

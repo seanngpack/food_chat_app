@@ -9,6 +9,7 @@ import pickle
 import random
 import os
 import pprint
+from sklearn.model_selection import train_test_split
 
 path = os.path.abspath(__file__)
 dir_path = os.path.dirname(path)
@@ -55,7 +56,7 @@ def process_intents():
         vocab = sorted(list(set(vocab)))
         classes = sorted(list(set(classes)))
         document_map = dict(sorted(document_map.items()))
-            
+
         # document_map = combination between utterances and intents
         print(len(document_map), "document_map", document_map)
         # classes = intents
@@ -109,27 +110,29 @@ def build_dl_model(training):
         training (numpy array): numpy array of the training set
 
     '''
+    X = list(training[:, 0])
+    y = list(training[:, 1])
 
-    train_X = list(training[:, 0])
-    train_y = list(training[:, 1])
+    X = np.array(X)
+    y = np.array(y)
 
-    train_X = np.array(train_X)
-
-
-    
-    train_y = np.array(train_y)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.3, random_state=42)
 
     model = Sequential()
-    model.add(Dense(128, input_shape=(train_X[0].size,), activation='relu'))
+    model.add(Dense(128, input_shape=(X_train[0].size,), activation='relu'))
     model.add(Dropout(0.5))
     model.add(Dense(64, activation='relu'))
     model.add(Dropout(0.5))
-    model.add(Dense(train_y[0].size, activation='softmax'))
+    model.add(Dense(y_train[0].size, activation='softmax'))
 
     # Compile model. Stochastic gradient descent with Nesterov accelerated gradient
     sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
     model.compile(loss='categorical_crossentropy',
                   optimizer=sgd, metrics=['accuracy'])
 
-    hist = model.fit(train_X, train_y, epochs=200, batch_size=5, verbose=1)
+    hist = model.fit(X_train, y_train, epochs=200, batch_size=5, verbose=1)
     model.save(dir_path + '/data/' + 'nlp_model.h5', hist)
+    scores = model.evaluate(X_test, y_test, verbose=0)
+    print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+
