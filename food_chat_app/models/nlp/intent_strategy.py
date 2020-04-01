@@ -1,9 +1,11 @@
 import abc
 
+
 class IntentStrategy(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def execute(self, entity):
         pass
+
 
 class ProximityStrategy(IntentStrategy):
     def execute(self, entity):
@@ -22,20 +24,24 @@ class RatingStrategy(IntentStrategy):
         print('rating search' + entity)
         return 'rating search ' + entity
 
+
 class NameStrategy(IntentStrategy):
     def execute(self, entity):
         print('name search' + entity)
         return 'name search ' + entity
+
 
 class RandomStrategy(IntentStrategy):
     def execute(self, entity):
         print('random search' + entity)
         return 'random search ' + entity
 
+
 class NullStrategy(IntentStrategy):
     def execute(self, entity):
         print('null search' + entity)
         return 'null search ' + entity
+
 
 class GratitudeStrategy(IntentStrategy):
     def execute(self, entity):

@@ -9,10 +9,6 @@ lemmatizer = nltk.WordNetLemmatizer()
 path = os.path.abspath(__file__)
 dir_path = os.path.dirname(path)
 
-# TODO: later I can add a named entity recognizer to pull
-# entities from the user query so they can be used in the SQL
-# select statement
-
 
 def sentence_to_bow_vector(sentence, vocab):
     '''Given a sentence and vocab, create a bag of words vector.
@@ -54,32 +50,6 @@ def tokenize_sentence(sentence: str):
 
     return lemmatized_tokens
 
-def extract_entity(sentence: str):
-    chunker = NamedEntityChunker()
-
-    chunked = chunker.parse(nltk.pos_tag(nltk.word_tokenize(sentence)))
-    return chunked
-
-
-def get_named_entity(chunked):
-    '''Given a chunk, get the FIRST labeled chunk, if a labeled chunk
-    doesn't exist then get a NNP proper noun, if that doesn't exist
-    then return None
-
-    ex. (geo Germany/NNP) -> Germany
-
-    '''
-
-    backup = ''
-    for chunk in chunked:
-        if hasattr(chunk, 'label'):
-        #  print(chunk.label(), ' '.join(c[0] for c in chunk))
-            return chunk[0][0]
-        elif chunk[1] == 'NNP':
-            backup=chunk[0]
-    return backup
-
-
 
 
 def lemmatize_word(word):
@@ -115,3 +85,28 @@ def get_pos(word):
 
     return tag_dict.get(tag, nltk.corpus.wordnet.NOUN)
 
+
+def extract_entity(sentence: str):
+    chunker = NamedEntityChunker()
+
+    chunked = chunker.parse(nltk.pos_tag(nltk.word_tokenize(sentence)))
+    return chunked
+
+
+def get_named_entity(chunked):
+    '''Given a chunk, get the FIRST labeled chunk, if a labeled chunk
+    doesn't exist then get a NNP proper noun, if that doesn't exist
+    then return None
+
+    ex. (geo Germany/NNP) -> Germany
+
+    '''
+
+    backup = ''
+    for chunk in chunked:
+        if hasattr(chunk, 'label'):
+            #  print(chunk.label(), ' '.join(c[0] for c in chunk))
+            return chunk[0][0]
+        elif chunk[1] == 'NNP':
+            backup = chunk[0]
+    return backup
