@@ -5,7 +5,6 @@ import os
 import string
 import collections
 import pickle
-from collections import Iterable
 
 from nltk.tag import ClassifierBasedTagger
 from nltk.chunk import ChunkParserI, conlltags2tree, tree2conlltags

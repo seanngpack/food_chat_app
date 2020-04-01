@@ -73,6 +73,8 @@ def intentToStrat(intent: str):
         return RatingStrategy()
     elif intent == IntentType.restaurant_search_by_name:
         return NameStrategy()
+    elif intent == IntentType.restaurant_random_search:
+        return RandomStrategy()
     elif intent == IntentType.restaurant_null_search:
         return NullStrategy()
     elif intent == IntentType.gratitude:
