@@ -27,6 +27,11 @@ class NameStrategy(IntentStrategy):
         print('name search' + entity)
         return 'name search ' + entity
 
+class RandomStrategy(IntentStrategy):
+    def execute(self, entity):
+        print('random search' + entity)
+        return 'random search ' + entity
+
 class NullStrategy(IntentStrategy):
     def execute(self, entity):
         print('null search' + entity)
