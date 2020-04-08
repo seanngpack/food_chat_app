@@ -22,20 +22,20 @@ def check_if_popular(pop_list, menu_list):
     popular =[]
     for menu_item in menu_list:
         if menu_item in pop_list:
-            popular.append("yes")
+            popular.append("True")
         else:
-            popular.append("no")
+            popular.append("False")
     pop_dishes = ', '.join(map(str,popular))
     return pop_dishes
 
-def get_1000_restaurants():
+def get_restaurants():
     rest_URL = [] #get list of URL for each page of 30 restaurants
-    for i in range(0,60,30):
+    for i in range(0,500,30):
         URL = "https://www.yelp.com/search?find_desc=Restaurants&find_loc=Boston%2C%20MA&start="+str(i)
         rest_URL.append(URL)
     return rest_URL
 
-def try_threading(urlList):
+def get_restaurant_link(urlList):
     global test_yelp
     try:
         test_yelp=[]
@@ -48,12 +48,13 @@ def try_threading(urlList):
     except:
         print("error")
 
-def try_threading_each(test_yelp_url):
+def enter_yelp_page(test_yelp_url):
     global scraped_data
-    dict = {}
+    menudict = {}
 
     newpage = urllib.request.urlopen(test_yelp_url)
     newsoup = BeautifulSoup(newpage, 'lxml') 
+
     #get name of restaurant
     try:
         name = newsoup.find('h1', class_ = 'lemon--h1__373c0__2ZHSL heading--h1__373c0__1VUMO heading--no-spacing__373c0__1PzQP heading--inline__373c0__1F-Z6').text
@@ -82,7 +83,7 @@ def try_threading_each(test_yelp_url):
     try:
         price =  newsoup.find('span', class_='lemon--span__373c0__3997G text__373c0__2pB8f text-color--normal__373c0__K_MKN text-align--left__373c0__2pnx_ text-bullet--after__373c0__1ZHaA text-size--large__373c0__1568g').text
         if re.match("^\$", str(price)):
-            pricerange = price
+            pricerange = len(price.strip())
     except:
         pricerange = "Null"
 
@@ -93,8 +94,11 @@ def try_threading_each(test_yelp_url):
             amenities = m.text
             if re.match("Takes Reservations",str(amenities)):
                 reserve = amenities.split('\xa0')[-1]
-                if re.match('^Yes|No|$', reserve) or re.match('^Yes|No|$',reserve):
-                    reservation = reserve
+                if re.match('^Yes|$', reserve):
+                    reservation = "True"
+                    break
+                elif re.match('^No|$',reserve):
+                    reservation = "False"
                     break
             else:
                 reservation = "Null"
@@ -107,8 +111,11 @@ def try_threading_each(test_yelp_url):
             amenities = m.text
             if re.findall("Vegan Option",str(amenities)):
                 veg = amenities.split('\xa0')[-1]
-                if re.match('^Yes|No|$', veg) or re.match('^Yes|No|$', veg):
-                    vegan = veg
+                if re.match('^Yes|$', veg):
+                    vegan = "True"
+                    break
+                elif re.match('^No|$', veg):
+                    vegan = "False"
                     break
             else:
                 vegan = "Null"
@@ -121,16 +128,17 @@ def try_threading_each(test_yelp_url):
             amenities = m.text
             if re.findall("Offers Delivery",str(amenities)):
                 deliv = amenities.split('\xa0')[-1]
-                if re.match('^Yes|No|$', deliv) or re.match('^Yes|No|$', deliv):
-                    delivery= deliv
+                if re.match('^Yes|$', deliv):
+                    delivery= "True"
+                    break
+                elif re.match('^No|$', deliv):
+                    delivery = "False"
                     break
             else:
                 delivery = "Null"
     except:
         delivery = "Null"
         
-
-
     #get website of restaurant
     try:
         restwebsite = newsoup.select('div > div > p:nth-child(2) > a')[0].text
@@ -188,14 +196,9 @@ def try_threading_each(test_yelp_url):
     except:
         sundayhours = "Null"
     
-    #get popular dishes
+    #get all dishes
     try:
         dish_list = []
-        popular_list =[]
-
-        #appends to popular dish list 
-        popular_list = [dish.text for dish in newsoup.find_all('p', class_ = re.compile("lemon--p__373c0__3Qnnj text__373c0__2pB8f text-color--normal__373c0__K_MKN text-align--left__373c0__2pnx_ text-weight--bold__373c0__3HYJa text--truncated__373c0__3IHqb"))]
-            
         #looks for restaurant menu
         m = newsoup.select_one("div > div:nth-child(4) > div > div.lemon--div__373c0__1mboc.arrange-unit__373c0__1piwO.arrange-unit-fill__373c0__17z0h.border-color--default__373c0__2oFDT > p > a")
         menuURL = "https://yelp.com"+ m['href']
@@ -207,13 +210,22 @@ def try_threading_each(test_yelp_url):
 
         #gets all the dishes on the menu
         dishes = ', '.join(map(str,dish_list))
-           
+    except:
+        dishes = "Null"
+
+    #get popular dishes
+    try:
+        popular_list =[]
+
+        #appends to popular dish list 
+        popular_list = [dish.text for dish in newsoup.find_all('p', class_ = re.compile("lemon--p__373c0__3Qnnj text__373c0__2pB8f text-color--normal__373c0__K_MKN text-align--left__373c0__2pnx_ text-weight--bold__373c0__3HYJa text--truncated__373c0__3IHqb"))]
+         
         #check if dish is popular
         popular = check_if_popular(popular_list, dish_list)
 
     except:
-        dishes = "Null"
         popular = "Null"
+
 
     #get 5 reviews
     try:
@@ -236,41 +248,41 @@ def try_threading_each(test_yelp_url):
         reviewstarrating = "Null"
 
     #add data to the dictionary
-    dict['restaurant_name'] = name
-    dict['city'] = city
-    dict['star_rating'] = starrating
-    dict['pricerange'] = pricerange
-    dict['reservation'] = reservation
-    dict['vegan_option'] = vegan
-    dict['delivery_option'] = delivery
-    dict['restaurant_website'] = restwebsite
-    dict['cusine_types'] = cusinetype
-    dict['monday_hours'] = mondayhours
-    dict['tuesday_hours'] = tuesdayhours
-    dict['wednesday_hours']=wednesdayhours
-    dict['thursday_hours'] = thursdayhours
-    dict['friday_hours'] = fridayhours
-    dict['saturday_hours'] = saturdayhours
-    dict['sunday_hours'] = sundayhours
-    dict['menu_dishes'] = dishes
-    dict['popular_dishes'] = popular
-    dict['reviews'] = reviews
-    dict['review_rating'] = reviewstarrating
+    menudict['restaurant_name'] = name
+    menudict['city'] = city
+    menudict['star_rating'] = starrating
+    menudict['pricerange'] = pricerange
+    menudict['reservation'] = reservation
+    menudict['vegan_option'] = vegan
+    menudict['delivery_option'] = delivery
+    menudict['restaurant_website'] = restwebsite
+    menudict['cusine_types'] = cusinetype
+    menudict['monday_hours'] = mondayhours
+    menudict['tuesday_hours'] = tuesdayhours
+    menudict['wednesday_hours']=wednesdayhours
+    menudict['thursday_hours'] = thursdayhours
+    menudict['friday_hours'] = fridayhours
+    menudict['saturday_hours'] = saturdayhours
+    menudict['sunday_hours'] = sundayhours
+    menudict['menu_dishes'] = dishes
+    menudict['popular_dishes'] = popular
+    menudict['reviews'] = reviews
+    menudict['review_rating'] = reviewstarrating
 
-    scraped_data.append(dict)
+    scraped_data.append(menudict)
 
 
 if __name__ == "__main__":
     
     print("threadstart", datetime.now().time())
-    restaurant_URL_list = get_1000_restaurants()
+    restaurant_URL_list = get_restaurants()
     #print(restaurant_URL_list)
 
-    with PoolExecutor(max_workers=4) as executor:
-        for i in executor.map(try_threading, restaurant_URL_list):
+    with PoolExecutor(max_workers=6) as executor:
+        for i in executor.map(get_restaurant_link, restaurant_URL_list):
             pass
         print("threadend", datetime.now().time())
-        for j in executor.map(try_threading_each, test_yelp):
+        for j in executor.map(enter_yelp_page, test_yelp):
             pass
 
     dataFrame = pd.DataFrame.from_dict(scraped_data)
