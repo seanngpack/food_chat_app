@@ -22,9 +22,9 @@ def check_if_popular(pop_list, menu_list):
     popular =[]
     for menu_item in menu_list:
         if menu_item in pop_list:
-            popular.append("True")
+            popular.append("Yes")
         else:
-            popular.append("False")
+            popular.append("No")
     pop_dishes = ', '.join(map(str,popular))
     return pop_dishes
 
@@ -95,10 +95,10 @@ def enter_yelp_page(test_yelp_url):
             if re.match("Takes Reservations",str(amenities)):
                 reserve = amenities.split('\xa0')[-1]
                 if re.match('^Yes|$', reserve):
-                    reservation = "True"
+                    reservation = "Yes"
                     break
                 elif re.match('^No|$',reserve):
-                    reservation = "False"
+                    reservation = "No"
                     break
             else:
                 reservation = "Null"
@@ -112,10 +112,10 @@ def enter_yelp_page(test_yelp_url):
             if re.findall("Vegan Option",str(amenities)):
                 veg = amenities.split('\xa0')[-1]
                 if re.match('^Yes|$', veg):
-                    vegan = "True"
+                    vegan = "Yes"
                     break
                 elif re.match('^No|$', veg):
-                    vegan = "False"
+                    vegan = "No"
                     break
             else:
                 vegan = "Null"
@@ -129,10 +129,10 @@ def enter_yelp_page(test_yelp_url):
             if re.findall("Offers Delivery",str(amenities)):
                 deliv = amenities.split('\xa0')[-1]
                 if re.match('^Yes|$', deliv):
-                    delivery= "True"
+                    delivery= "Yes"
                     break
                 elif re.match('^No|$', deliv):
-                    delivery = "False"
+                    delivery = "No"
                     break
             else:
                 delivery = "Null"
@@ -213,16 +213,15 @@ def enter_yelp_page(test_yelp_url):
     except:
         dishes = "Null"
 
+
     #get popular dishes
     try:
-        popular_list =[]
-
-        #appends to popular dish list 
-        popular_list = [dish.text for dish in newsoup.find_all('p', class_ = re.compile("lemon--p__373c0__3Qnnj text__373c0__2pB8f text-color--normal__373c0__K_MKN text-align--left__373c0__2pnx_ text-weight--bold__373c0__3HYJa text--truncated__373c0__3IHqb"))]
-         
-        #check if dish is popular
-        popular = check_if_popular(popular_list, dish_list)
-
+        if dishes != "Null":
+            popular_list = [dish.text for dish in newsoup.find_all('p', class_ = re.compile("lemon--p__373c0__3Qnnj text__373c0__2pB8f text-color--normal__373c0__K_MKN text-align--left__373c0__2pnx_ text-weight--bold__373c0__3HYJa text--truncated__373c0__3IHqb"))]
+            #check if dish is popular
+            popular = check_if_popular(popular_list, dish_list)
+        else:
+            popular = "Null"
     except:
         popular = "Null"
 
