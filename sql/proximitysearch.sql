@@ -1,0 +1,1 @@
+SELECT restaurant_name FROM restaurant WHERE city = %s;
