@@ -1,126 +1,291 @@
-from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
+import timeit
 import pandas as pd
 import requests
 from requests import get
 from requests.exceptions import RequestException
 from contextlib import closing
 import re
+from datetime import datetime
+import lxml
+import urllib.request
+from concurrent.futures import ThreadPoolExecutor as PoolExecutor
 
-# for link in soup.select('span span a'):
-#     print(link.string)
-
-#PSEUDOCODE
-#get all links to yelp 
-#go inside each link
-#inside each link, gather information
-#...for link in list:..
-#get information needed
-#append to dictionary
-
-
+#global variables
 #create a list to store the scraped data
 scraped_data = []
+test_yelp = []
+  
+# code snippet whose execution time is to be measured 
+def check_if_popular(pop_list, menu_list):
+    popular =[]
+    for menu_item in menu_list:
+        if menu_item in pop_list:
+            popular.append("Yes")
+        else:
+            popular.append("No")
+    pop_dishes = ', '.join(map(str,popular))
+    return pop_dishes
 
-yelp_link = [] #list of yelp link for each yelp restaurant 
-for i in range(0,60,30):
-    URL = "https://www.yelp.com/search?find_desc=Restaurants&find_loc=Boston%2C%20MA&start="+str(i)
-    #print(type(URL))
-    page = requests.get(URL, timeout = 25)
-    soup = BeautifulSoup(page.content, 'html.parser')   
-    #find all the links to yelp page
-    #gets link for each restaurant in the list  
-    for link in soup.select('h4 span a'):
-        #filters out the ads
-        if re.match('^/biz',str(link['href'])):
-            yelp_link.append("https://yelp.com"+str(link['href']))
+def get_restaurants():
+    rest_URL = [] #get list of URL for each page of 30 restaurants
+    for i in range(0,500,30):
+        URL = "https://www.yelp.com/search?find_desc=Restaurants&find_loc=Boston%2C%20MA&start="+str(i)
+        rest_URL.append(URL)
+    return rest_URL
 
-#looping through each restaurant url from list
-for yelp_url in yelp_link:
+def get_restaurant_link(urlList):
+    global test_yelp
+    try:
+        test_yelp=[]
+        page = urllib.request.urlopen(urlList)
+        soup = BeautifulSoup(page, 'lxml') 
+        for link in soup.find_all('a', class_ = 'lemon--a__373c0__IEZFH link__373c0__1G70M link-color--inherit__373c0__3dzpk link-size--inherit__373c0__1VFlE'):
+            #filters out the ads
+            if re.match('^/biz',str(link['href'])):
+                test_yelp.append("https://yelp.com"+str(link['href']))
+    except:
+        print("error")
 
-    #initialize dictionary
-    dict = {}
+def enter_yelp_page(test_yelp_url):
+    global scraped_data
+    menudict = {}
 
-    newpage = requests.get(yelp_url, timeout = 15)
-    newsoup = BeautifulSoup(newpage.content, 'html.parser')  
-    
+    newpage = urllib.request.urlopen(test_yelp_url)
+    newsoup = BeautifulSoup(newpage, 'lxml') 
+
     #get name of restaurant
     try:
-        name = newsoup.select('div > div > div:nth-child(1) > h1')[0].text
+        name = newsoup.find('h1', class_ = 'lemon--h1__373c0__2ZHSL heading--h1__373c0__1VUMO heading--no-spacing__373c0__1PzQP heading--inline__373c0__1F-Z6').text
     except:
-        name = "None"
+        name = "Null"
 
     #get city
     try: 
-        cityname = newsoup.select('address > p:nth-child(2) > span')[0].text
-        cityname = cityname.split(',')
-        cityname = cityname[0]
+        cityname = newsoup.select('address > p')[1].text.split(',')[0]
         if re.match("^\S+$", cityname):
             city = cityname
+        else:
+            cityname = newsoup.select('address > p')[2].text.split(',')[0]
+            if re.match("^\S+$", cityname):
+                city = cityname
     except:
-        city = "None"
+        city = "Null"
 
     #get star rating 
     try:
-        stars= newsoup.find(class_ = re.compile("i-star"))['aria-label']
-        stars = str(stars)
-        stars = stars.split(' ')
-        starrating = stars[0]
+        starrating= newsoup.find(class_ = re.compile("i-stars--large"))['aria-label'].split(' ')[0]
     except:
-        starrating = "None"
+        starrating = "Null"
 
     #get dollar signs
     try:
-        price = newsoup.select('div > div > span:nth-child(3) > span')[0].text
+        price =  newsoup.find('span', class_='lemon--span__373c0__3997G text__373c0__2pB8f text-color--normal__373c0__K_MKN text-align--left__373c0__2pnx_ text-bullet--after__373c0__1ZHaA text-size--large__373c0__1568g').text
         if re.match("^\$", str(price)):
-            pricerange = price
+            pricerange = len(price.strip())
     except:
-        pricerange = "None"
+        pricerange = "Null"
 
     #get reservation info
     try:
-        reserve = newsoup.select('div > div > div:nth-child(3) > div > div:nth-child(2) > span')[1].text
-        reserve = reserve.strip()
-        if re.match('^Yes|No|$', reserve) or re.match('^Yes|No|$',reserve):
-            reservation = reserve
-
+        r = newsoup.find_all('div', class_ = re.compile("lemon--div__373c0__1mboc arrange-unit__373c0__1piwO arrange-unit-fill__373c0__17z0h border-color--default__373c0__2oFDT"))
+        for m in r:
+            amenities = m.text
+            if re.match("Takes Reservations",str(amenities)):
+                reserve = amenities.split('\xa0')[-1]
+                if re.match('^Yes|$', reserve):
+                    reservation = "Yes"
+                    break
+                elif re.match('^No|$',reserve):
+                    reservation = "No"
+                    break
+            else:
+                reservation = "Null"
     except:
-        reservation = "None"
-    
-    #get credit card info
+        reservation = "Null"
+
+    #get vegan option info
     try:
-        credit = newsoup.select('div > div:nth-child(2) > span:nth-child(2)')[0].text
-        credit = credit.strip()
-        if re.match('^Yes|No|$', credit) or re.match('^Yes|No|$',credit):
-            creditcard = credit
+        for m in r:
+            amenities = m.text
+            if re.findall("Vegan Option",str(amenities)):
+                veg = amenities.split('\xa0')[-1]
+                if re.match('^Yes|$', veg):
+                    vegan = "Yes"
+                    break
+                elif re.match('^No|$', veg):
+                    vegan = "No"
+                    break
+            else:
+                vegan = "Null"
+    except:     
+        vegan = "Null"
 
+    #get delivery information
+    try:
+        for m in r:
+            amenities = m.text
+            if re.findall("Offers Delivery",str(amenities)):
+                deliv = amenities.split('\xa0')[-1]
+                if re.match('^Yes|$', deliv):
+                    delivery= "Yes"
+                    break
+                elif re.match('^No|$', deliv):
+                    delivery = "No"
+                    break
+            else:
+                delivery = "Null"
     except:
-        creditcard = "None"
-
-    #get takeout information 
-   
+        delivery = "Null"
+        
     #get website of restaurant
     try:
         restwebsite = newsoup.select('div > div > p:nth-child(2) > a')[0].text
     except:
-        restwebsite = "None"
+        restwebsite = "Null"
+
+    #get cusine type of restaurant 
+    try:
+        c = []
+        ctype = newsoup.select("div > div > span > span > a")
+        c =[a.text for a in ctype]
+        cusinetype = ', '.join(map(str,c))             
+    except:
+        cusinetype = "Null"
+
+    #get monday hours
+    try:
+        mondayhours = newsoup.select_one('tbody > tr:nth-child(1)>td:nth-child(2)').text
+    except:
+        mondayhours = "Null"
+        
+    #get tuesday hours
+    try:
+        tuesdayhours = newsoup.select_one('tbody > tr:nth-child(2)>td:nth-child(2)').text
+    except:
+        tuesdayhours = "Null"
+        
+    #get wednesday hours
+    try:
+        wednesdayhours = newsoup.select_one('tbody > tr:nth-child(3)>td:nth-child(2)').text
+    except:
+        wednesdayhours = "Null"
+        
+    #get thursday hours
+    try:
+        thursdayhours = newsoup.select_one('tbody > tr:nth-child(4)>td:nth-child(2)').text
+    except:
+        thursdayhours = "Null"
+
+    #get friday hours
+    try:
+        fridayhours = newsoup.select_one('tbody > tr:nth-child(5)>td:nth-child(2)').text
+    except:
+        fridayhours = "Null"
+        
+    #get saturday hours
+    try:
+        saturdayhours = newsoup.select_one('tbody > tr:nth-child(6)>td:nth-child(2)').text
+    except:
+        saturdayhours = "Null"
+        
+    #get sunday hours
+    try:
+        sundayhours = newsoup.select_one('tbody > tr:nth-child(7)>td:nth-child(2)').text
+    except:
+        sundayhours = "Null"
+    
+    #get all dishes
+    try:
+        dish_list = []
+        #looks for restaurant menu
+        m = newsoup.select_one("div > div:nth-child(4) > div > div.lemon--div__373c0__1mboc.arrange-unit__373c0__1piwO.arrange-unit-fill__373c0__17z0h.border-color--default__373c0__2oFDT > p > a")
+        menuURL = "https://yelp.com"+ m['href']
+        menupage = requests.get(menuURL,timeout=1)
+        menusoup = BeautifulSoup(menupage.text, 'lxml')
+
+        #appends to menu list
+        dish_list=[d.text.strip()for d in menusoup.find_all("h4")]
+
+        #gets all the dishes on the menu
+        dishes = ', '.join(map(str,dish_list))
+    except:
+        dishes = "Null"
+
+
+    #get popular dishes
+    try:
+        if dishes != "Null":
+            popular_list = [dish.text for dish in newsoup.find_all('p', class_ = re.compile("lemon--p__373c0__3Qnnj text__373c0__2pB8f text-color--normal__373c0__K_MKN text-align--left__373c0__2pnx_ text-weight--bold__373c0__3HYJa text--truncated__373c0__3IHqb"))]
+            #check if dish is popular
+            popular = check_if_popular(popular_list, dish_list)
+        else:
+            popular = "Null"
+    except:
+        popular = "Null"
+
+
+    #get 5 reviews
+    try:
+        review =[rev.text for rev in newsoup.find_all("p",class_ = 'lemon--p__373c0__3Qnnj text__373c0__2pB8f comment__373c0__3EKjH text-color--normal__373c0__K_MKN text-align--left__373c0__2pnx_')]
+        if (len(review)<5):
+            reviews = '> '.join(map(str,review[0:len(review)]))
+        else:
+            reviews = '> '.join(map(str,review[0:5]))
+    except:
+        reviews = "Null"
+
+    #get review star rating
+    try:
+        reviewstar = [i['aria-label'].split(' ')[0] for i in newsoup.find_all('div', class_=re.compile('i-stars--regular'))]
+        if (len(reviewstar) < 5):
+            reviewstarrating = ', '.join(map(str,reviewstar[0:len(reviewstar)]))
+        else:
+            reviewstarrating = ', '.join(map(str,reviewstar[0:5]))
+    except:
+        reviewstarrating = "Null"
 
     #add data to the dictionary
-    dict['restaurant_name'] = name
-    dict['city'] = city
-    dict['starrating'] = starrating
-    dict['pricerange'] = pricerange
-    dict['reservation'] = reservation
-    dict['creditcard'] = creditcard
-    #dict['takeout'] = takeout
-    dict['restaurant website'] = restwebsite   
+    menudict['restaurant_name'] = name
+    menudict['city'] = city
+    menudict['star_rating'] = starrating
+    menudict['pricerange'] = pricerange
+    menudict['reservation'] = reservation
+    menudict['vegan_option'] = vegan
+    menudict['delivery_option'] = delivery
+    menudict['restaurant_website'] = restwebsite
+    menudict['cusine_types'] = cusinetype
+    menudict['monday_hours'] = mondayhours
+    menudict['tuesday_hours'] = tuesdayhours
+    menudict['wednesday_hours']=wednesdayhours
+    menudict['thursday_hours'] = thursdayhours
+    menudict['friday_hours'] = fridayhours
+    menudict['saturday_hours'] = saturdayhours
+    menudict['sunday_hours'] = sundayhours
+    menudict['menu_dishes'] = dishes
+    menudict['popular_dishes'] = popular
+    menudict['reviews'] = reviews
+    menudict['review_rating'] = reviewstarrating
 
-    #append the scraped data to the list
-    scraped_data.append(dict)
+    scraped_data.append(menudict)
 
-dataFrame = pd.DataFrame.from_dict(scraped_data)
-dataFrame.to_csv('restaurant_data.csv',index = False)
 
+if __name__ == "__main__":
+    
+    print("threadstart", datetime.now().time())
+    restaurant_URL_list = get_restaurants()
+    #print(restaurant_URL_list)
+
+    with PoolExecutor(max_workers=6) as executor:
+        for i in executor.map(get_restaurant_link, restaurant_URL_list):
+            pass
+        print("threadend", datetime.now().time())
+        for j in executor.map(enter_yelp_page, test_yelp):
+            pass
+
+    dataFrame = pd.DataFrame.from_dict(scraped_data)
+    dataFrame.to_csv('restaurant_data.csv',index = False)
+    print("end", datetime.now().time())
 
 
