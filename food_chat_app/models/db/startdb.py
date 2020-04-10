@@ -4,8 +4,8 @@ import pprint
 from csv import reader
 import pandas as pd
 
-from dbtests import restaurant_data_tests 
-from dbtests import reviews_data_tests 
+from tests.dbtests import restaurant_data_tests 
+from tests.dbtests import reviews_data_tests 
 
 from scraperhelpers import parse_thru_dishes
 from scraperhelpers import parse_thru_foodtypes
@@ -54,7 +54,6 @@ def insert_data(csv_file:str):
     df = pd.read_csv(csv_file)
     db.execute("USE food_chat_db")
     cleaned_df = df.replace({'Yes':True,'No':False,'Null': None })
-    print(cleaned_df[['reservation','vegan_option','delivery_option']])
     for row in cleaned_df.itertuples(index=True,name='Pandas'):
 
         #print('Going to insert into the database now')
@@ -79,14 +78,13 @@ def insert_data(csv_file:str):
         db.query(menu_query,tuple([rest_id]))#menu query
 
         menu_id = get_menu_id(rest_id) # finds menu_id through menu table from specific restaurant
-        #print(dish_list)
-        #print(len(dish_list))
-        """ if len(dish_list) != 0: #check to ensure that the dishes were actually scraped
-            for i in range(len(dish_list)):
-                print(tuple([menu_id,dish_list[i],pop_list[i]]))
-                #db.query(dish_query,tuple([menu_id,dish_list[i],pop_list[i]]))
+        
+        if len(dish_list) != 0: #check to ensure that the dishes were actually scraped
+            for i in range(len(pop_list)):
+                #print(tuple([menu_id,dish_list[i],pop_list[i]]))
+                db.query(dish_query,tuple([menu_id,dish_list[i],pop_list[i]]))
         else:
-            db.query(dish_query,tuple([menu_id,None,None])) """
+            db.query(dish_query,tuple([menu_id,None,None]))
         db.commit()
 if __name__ == "__main__":
     setup_db()
