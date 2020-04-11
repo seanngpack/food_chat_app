@@ -36,6 +36,13 @@ def drop_all_tables():
 
 
 def insert_data(csv_file: str):
+    '''Inserts data from csv file to the database.
+    I guess this basically assumes there's a clean database.
+
+    Args:
+        csv_file (str): the path to the csv file.
+
+    '''
     rest_insert = 'INSERT INTO food_chat_db.restaurant(restaurant_name,city,star_rating,price_range,reservation,vegan_option,delivery_option,website) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)'
     hours_insert = 'INSERT INTO food_chat_db.hoursAvailable(restaurant_id,monday_hours,tuesday_hours,wednesday_hours,thursday_hours,friday_hours,saturday_hours,sunday_hours) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)'
     foodtype_insert = 'INSERT INTO food_chat_db.foodType(restaurant_id,food_type) VALUES (%s,%s)'
@@ -46,7 +53,7 @@ def insert_data(csv_file: str):
     df = pd.read_csv(csv_file)
 
     cleaned_df = df.replace({'Yes': True, 'No': False, 'Null': None})
-    print(cleaned_df[['reservation', 'vegan_option', 'delivery_option']])
+    # print(cleaned_df[['reservation', 'vegan_option', 'delivery_option']])
     for row in cleaned_df.itertuples(index=True, name='Pandas'):
         db.execute(rest_insert, tuple([getattr(row, 'restaurant_name'),
                                        getattr(row, 'city'),
@@ -58,7 +65,7 @@ def insert_data(csv_file: str):
                                        getattr(row, 'restaurant_website')]))
 
         rest_id = db.query('SELECT restaurant_id FROM restaurant WHERE restaurant_name = %s',
-                           getattr(row, 'restaurant_name'))
+                           getattr(row, 'restaurant_name'))[0]['restaurant_id']
 
         rev_list = getattr(row, 'reviews').replace('¬†', '').split('>')
 
@@ -66,7 +73,11 @@ def insert_data(csv_file: str):
 
         foodtype_list = getattr(row, 'cusine_types').split(', ')
 
-        dish_list = getattr(row, 'menu_dishes').split(', ') if not None else []
+        if getattr(row, 'menu_dishes') is not None:
+            dish_list = getattr(row, 'menu_dishes').split(', ')
+        else:
+            dish_list = []
+
         pop_list = parse_popular(getattr(row, 'popular_dishes'))
 
         # insert the reviews
