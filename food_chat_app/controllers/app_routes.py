@@ -7,8 +7,7 @@ from food_chat_app.models.nlp.intent_types import IntentType
 from food_chat_app.models.nlp.intent_strategy import *
 from food_chat_app.models.nlp import utils
 
-db = DB()
-message_engine = MessageEngine(db)
+message_engine = MessageEngine()
 predictor = Predictor()
 
 

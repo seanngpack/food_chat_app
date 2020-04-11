@@ -11,12 +11,11 @@ class MessageEngine:
 
     '''
 
-    def __init__(self, db):
+    def __init__(self):
         '''initialize the message processor.
 
         '''
 
-        self.db = db
         self.strategy = None
 
     def parse_user_message(self, request):

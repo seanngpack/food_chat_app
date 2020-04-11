@@ -25,11 +25,6 @@ def setup_db():
     except:
         raise Exception("database parameters invalid. Check your user, pass, or the \"db\" field in db.py")
 
-def get_sql_commands_from_file(sql_file: str):
-    with open(sql_file) as file:
-        text = file.read()
-        sql_commands = [x.replace('\n','') for x in text.split(';') if x]
-        return sql_commands
 
 def open_csv_from_file(csv_file:str):
     with open(csv_file, "r") as read_obj:

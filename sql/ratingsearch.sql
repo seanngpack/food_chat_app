@@ -1,1 +1,0 @@
-SELECT restaurant_name FROM restaurant WHERE star_rating = %s;w
