@@ -1,4 +1,5 @@
 import abc
+import food_chat_app.models.db.commands as db_commands
 
 
 class IntentStrategy(metaclass=abc.ABCMeta):
