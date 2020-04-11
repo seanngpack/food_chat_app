@@ -44,7 +44,7 @@ def handle_webhook():
         intentType = predictor.predict_intent(user_message)
 
         # get the intent and set the strategy of the MessageEngine
-        message_engine.set_strategy(intentToStrat(intentType))
+        message_engine.set_strategy(intent_to_strat(intentType))
 
         # get a reply to the user message
         reply = message_engine.get_reply(user_id, entity)
@@ -53,7 +53,7 @@ def handle_webhook():
     return Response(response="EVENT RECEIVED", status=200)
 
 
-def intentToStrat(intent: str):
+def intent_to_strat(intent: str):
     '''Given an IntentType, return a strategy for the MessageEngine
 
     Args:
