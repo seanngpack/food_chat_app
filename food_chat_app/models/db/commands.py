@@ -1,11 +1,15 @@
 from food_chat_app.models.db.db import DB
+from flask import current_app as app
 import pandas as pd
 
 '''Contains commands you can run to the database
 '''
 
 db = DB()
-db.execute('USE food_chat_db')
+try:
+    db.execute(f'USE {app.config["DB_NAME"]}')
+except:
+    print('ERROR: flask server not loaded or database doesn\'t exist')
 
 
 def get_sql_commands_from_file(sql_file: str):
@@ -23,12 +27,6 @@ def get_sql_commands_from_file(sql_file: str):
         text = file.read()
         sql_commands = [x.replace('\n', '') for x in text.split(';') if x]
         return sql_commands
-
-
-def create_db():
-    sql_commands = get_sql_commands_from_file('sql/create_all_tables.sql')
-    for cmd in sql_commands:
-        db.execute(cmd)
 
 
 def drop_all_tables():

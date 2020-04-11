@@ -13,8 +13,12 @@ class DB:
 
         '''
 
-        self._conn = db.connect()
-        self._cursor = self._conn.cursor()
+        try:
+            self._conn = db.connect()
+            self._cursor = self._conn.cursor()
+        except:
+            print('ERROR: flask server not loaded')
+        
 
     @property
     def connection(self):
