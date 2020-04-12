@@ -11,25 +11,27 @@ class IntentStrategy(metaclass=abc.ABCMeta):
 
 
 class ProximityStrategy(IntentStrategy):
-    def __init__(self):
-        self.foodly_db = DB()
     def execute(self, entity):
-        self.foodly_db.execute("USE food_chat_db")
-        proximity_query = self.foodly_db.query(import_sql_from_file('SQL/proximitysearch.sql'),entity)
-        if len(proximity_query) != 0:
-            proximity_list=[elem['restaurant_name'] for elem in proximity_query]
-            shuffle_list = random.sample(proximity_list,len(proximity_list))
+        if entity is None:
+            return 'please type your question again'
+
+        proximity_query = db_commands.proximity_query(entity)
+        if proximity_query is not None:
+            proximity_list = [elem['restaurant_name']
+                              for elem in proximity_query]
+            shuffle_list = random.sample(proximity_list, len(proximity_list))
             prompt = 'Here are some restaurants to checkout in '+entity+': '
-            #print(shuffle_list)
-            if len(shuffle_list)>10:
+            # print(shuffle_list)
+            if len(shuffle_list) > 10:
                 results = ','.join(shuffle_list[0:10])
             else:
                 results = ','.join(shuffle_list)
             proximityresponse = (prompt+results)
         else:
-            proximityresponse = "Sorry, no restaurants found in: "+entity+". Please try searching again."
-        print(proximityresponse)
-        return(proximityresponse)
+            proximityresponse = "Sorry, no restaurants found in: " + \
+                entity+". Please try searching again."
+
+        return proximityresponse
 
 
 class FoodTypeStrategy(IntentStrategy):
