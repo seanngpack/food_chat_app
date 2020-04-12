@@ -102,7 +102,7 @@ def insert_data(csv_file: str):
 
 
 def _parse_popular(pop_list: str):
-    """ helper function that returns a list of popular or not dishes"""
+    ''' helper function that returns a list of popular or not dishes'''
     if type(pop_list) != str:
         popularity = []
     else:
@@ -126,36 +126,57 @@ def proximity_query(entity: str):
         location
 
     Returns:
-        a list of restaurants or null
+        a list of restaurants or None if no results
 
     '''
 
-    proximity_query = db.query(get_sql_commands_from_file('SQL/proximity_search.sql')[0], (entity, ))
+    proximity_query = db.query(get_sql_commands_from_file(
+        'SQL/proximity_search.sql')[0], (entity, ))
 
-    return proximity_query
+    if type(proximity_query) is not list:
+        return None
+    else:
+        return proximity_query
+
 
 def random_query():
     '''
 
     '''
 
-    random_search = db.query(get_sql_commands_from_file('SQL/random_search.sql'))
-    return random_search
+    random_search = db.query(
+        get_sql_commands_from_file('SQL/random_search.sql'))
+    if random_search is not list:
+        return None
+    else:
+        return random_search
 
-def vegan_query(entity:str):
-    """ Finds restaurants based on vegan or not
+
+def vegan_query(entity: str):
+    ''' Finds restaurants based on vegan or not
 
     Args
 
-    """
+    '''
     vegan_query = db.query(get_sql_commands_from_file('SQL/vegan_search.sql'))
+    if vegan_query is not list:
+        return None
+    return vegan_query
 
-def food_type_query(entity:str):
-    """ Finds restaurants based on cuisine type
 
-    Args
+def food_type_query(entity: str):
+    ''' Finds restaurants based on cuisine type
 
-    """
-    food_type_query = db.query(get_sql_commands_from_file('SQL/food_type_search.sql'))
+    Args:
+        food type hopefully
 
+    Returns:
+        a list of restaurants or None if no results
+
+    '''
+    food_type_query = db.query(get_sql_commands_from_file(
+        'SQL/food_type_search.sql'), (entity, ))
+    if food_type_query is not list:
+        return None
+    return food_type_query
 

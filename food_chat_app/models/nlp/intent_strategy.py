@@ -17,7 +17,7 @@ class ProximityStrategy(IntentStrategy):
             return 'please type your question again'
 
         proximity_query = db_commands.proximity_query(entity)
-        if len(proximity_query) != 0:
+        if proximity_query is not None:
             proximity_list = [elem['restaurant_name']
                               for elem in proximity_query]
             shuffle_list = random.sample(proximity_list, len(proximity_list))
@@ -37,32 +37,18 @@ class ProximityStrategy(IntentStrategy):
 
 class FoodTypeStrategy(IntentStrategy):
     def execute(self, entity):
-        if entity == 'Vegan' or entity == 'vegan':
-            vegan_query = db_commands.vegan_query(entity)
-            if type(vegan_query) == list:
-                rest_list=[]
-                for elem in vegan_query:
-                    rest_list.append(elem['restaurant_name'])
-                prompt = "Here are some places with vegan options to checkout:"
-                results = ", ".join( str(e) for e in rest_list ) 
-                
-                return prompt,results
-            else:
-                return "What are you looking for with vegan? Please try searching again."     
-        elif entity != 'Vegan' or entity != 'vegan':
-            foodtype_query = db_commands.food_type_query(import_sql_from_file("SQL/foodtypesearch.sql"),entity)
-            if type(foodtype_query) == list:
-                rest_list=[]
-                for elem in foodtype_query:
-                    rest_list.append(elem['restaurant_name'])
-                prompt = "Here are some restaurants to checkout:"
-                results = ", ".join( str(e) for e in rest_list ) 
-                
-                return prompt,results
-            else:
-                return "Couldn't find what you were looking for, please try again!" 
+        foodtype_query = db_commands.food_type_query(entity)
+        if type(foodtype_query) == list:
+            rest_list=[]
+            for elem in foodtype_query:
+                rest_list.append(elem['restaurant_name'])
+            prompt = "Here are some restaurants to checkout:"
+            results = ", ".join( str(e) for e in rest_list ) 
+            
+            return prompt,results
         else:
-            return "Sorry, couldn't find that. Please try asking something else."
+            return "Couldn't find what you were looking for, please try again!" 
+    
 
 
 class RatingStrategy(IntentStrategy):
