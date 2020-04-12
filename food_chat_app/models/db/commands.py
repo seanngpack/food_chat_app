@@ -6,10 +6,10 @@ import pandas as pd
 '''
 
 db = DB()
-try:
-    db.execute(f'USE {app.config["DB_NAME"]}')
-except:
-    print('ERROR: flask server not loaded or database doesn\'t exist')
+# try:
+#     db.execute(f'USE {app.config["DB_NAME"]}')
+# except:
+#     print('ERROR: flask server not loaded or database doesn\'t exist')
 
 
 def get_sql_commands_from_file(sql_file: str):

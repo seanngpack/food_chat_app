@@ -2,16 +2,13 @@
         {"intent": "restaurant_proximity_search",
          "utterances": ["Food near me?", "restaurant nearby", "restaurants close to me", "What should I eat that is nearby?", "I am looking for food close to me"]
         },
-        {"intent": "restaurant_food_type_search",
-         "utterances": ["I want to eat Chinese food", "I want to eat French food", "Chinese restaurants", "American restaurants", "Italian restaurants",
-                        "I want to eat restaurant with specific food type"]
-        },
         {"intent": "restaurant_rating_search",
          "utterances": ["I want to eat at a highly rated restaurant", "highly rated restaurants", "Any good reviewed restaurants?",
                         "Best reviewed restaurants", "Best rated restaurants"]
         },
         {"intent": "restaurant_search_by_name",
-         "utterances": ["I want to eat at mcdonalds", "Search restaurant by name", "I want to eat at Five Guys", "I want to eat at Starbucks"]
+         "utterances": ["I want to eat at mcdonalds", "Search restaurant by name", "I want to eat at Five Guys", "I want to eat at Starbucks",
+                "Chinese restaurants", "American restaurants", "Italian restaurants"]
         },
         {"intent": "restaurant_random_search",
                 "utterances": ["I don't know what to eat", "Where should I go to eat", "I am not sure what I should eat",
@@ -21,7 +18,7 @@
         "utterances": []
         },
         {"intent": "update_database",
-                "utterances": ["refresh the database", "update search results"]
+                "utterances": ["refresh the database", "update search results", "scrape for more data", "update the database"]
                 },
         {"intent": "gratitude",
         "utterances": ["Thanks", "Thank you", "That's helpful", "Awesome, thanks", "Thanks for helping me", "cool"]

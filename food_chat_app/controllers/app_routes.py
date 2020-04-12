@@ -66,8 +66,8 @@ def intent_to_strat(intent: str):
 
     if intent == IntentType.restaurant_proximity_search:
         return ProximityStrategy()
-    elif intent == IntentType.restaurant_food_type_search:
-        return FoodTypeStrategy()
+    # elif intent == IntentType.restaurant_food_type_search:
+    #     return FoodTypeStrategy()
     elif intent == IntentType.restaurant_rating_search:
         return RatingStrategy()
     elif intent == IntentType.restaurant_search_by_name:
