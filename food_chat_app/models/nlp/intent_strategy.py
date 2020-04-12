@@ -78,9 +78,8 @@ class NameStrategy(IntentStrategy):
                 vegan = "do have"
             else:
                 vegan = "don't have"
-            
-            rest_details = "They are located in " + location + ", have an average price of " + avg_price + ", they " + delivery + " deliver, " + reservation + " reservations and " + vegan + " vegan options." + "Their website is: " + website+ "! "
-
+            rest_prompt = " They are located in %s, have an average price of %s,they %s deliver, %s reservations and %s vegan options. Their website is: %s! "
+            rest_details = (rest_prompt % (location, avg_price, delivery, reservation,vegan,website))
             #review section
             first_few_rev=[]
             first_few_rate=[]
