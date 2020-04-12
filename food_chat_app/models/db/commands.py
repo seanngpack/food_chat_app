@@ -6,10 +6,6 @@ import pandas as pd
 '''
 
 db = DB()
-# try:
-#     db.execute(f'USE {app.config["DB_NAME"]}')
-# except:
-#     print('ERROR: flask server not loaded or database doesn\'t exist')
 
 
 def get_sql_commands_from_file(sql_file: str):
@@ -278,7 +274,6 @@ def rating_query(entity: str):
 
 def user_rating_query(entity: str):
 
-
     '''Find user review and user rating given a restaurant id.
 
         Args:
@@ -292,6 +287,6 @@ def user_rating_query(entity: str):
         'SQL/rating_search.sql')[1], (entity, ))
 
     if type(user_rating_query) is not list:
-            return None
+        return None
     else:
         return user_rating_query

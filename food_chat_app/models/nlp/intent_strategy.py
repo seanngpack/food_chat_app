@@ -62,21 +62,26 @@ class RatingStrategy(IntentStrategy):
         return rating_response
 
 
+
+
 class NameStrategy(IntentStrategy):
     def execute(self, entity):
-        print('name strategy')
-
-        if entity is None:
-            return 'Please type your search again'
-
+        print('NameStrategy')
+        print(entity)
+        foodtype_query = db_commands.food_type_query(entity)
         name_query = db_commands.name_search_query(entity)
-        if name_query is not None:
-            rest_props = db_commands.rest_props_query(
-                name_query[0]['restaurant_id'])
-            review_props = db_commands.review_props_query(
-                name_query[0]['restaurant_id'])
-            hour_props = db_commands.hours_props_query(
-                name_query[0]['restaurant_id'])
+        if foodtype_query is not None:
+            #this becomes a cuisine search
+            rest_list=[]
+            for elem in foodtype_query:
+                rest_list.append(elem['restaurant_name'])
+            prompt = "Here are some restaurants to checkout:"
+            results = ", ".join( str(e) for e in rest_list ) 
+            return prompt + results
+        elif name_query is not None: 
+            rest_props = db_commands.rest_props_query(name_query[0]['restaurant_id'])
+            review_props = db_commands.review_props_query(name_query[0]['restaurant_id'])
+            hour_props = db_commands.hour_props_query(name_query[0]['restaurant_id'])
             initial_prompt = "Here is some information we have on: " + entity+". "
 
             # rest detail section
@@ -99,16 +104,12 @@ class NameStrategy(IntentStrategy):
                 vegan = "do have"
             else:
                 vegan = "don't have"
-
-            rest_details = "They are located in " + location + ", have an average price of " + avg_price + ", they " + delivery + \
-                " deliver, " + reservation + " reservations and " + vegan + \
-                " vegan options." + "Their website is: " + website + "! "
-
-            # review section
-            first_few_rev = []
-            first_few_rate = []
+            rest_prompt = " They are located in %s, have an average price of %s,they %s deliver, %s reservations and %s vegan options. Their website is: %s! "
+            rest_details = (rest_prompt % (location, avg_price, delivery, reservation,vegan,website))
+            #review section
+            first_few_rev=[]
+            first_few_rate=[]
             for index in range(len(review_props)-3):
-
                 first_few_rev.append(review_props[index]['review_content'])
                 first_few_rate.append(review_props[index]['rating'])
 
