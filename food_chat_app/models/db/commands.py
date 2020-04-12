@@ -140,3 +140,21 @@ def random_query():
     
     random_search = db.query(get_sql_commands_from_file('SQL/random_search.sql'))
     return random_search
+
+def vegan_query(entity:str):
+    """ Finds restaurants based on vegan or not
+
+    Args
+
+    """
+    vegan_query = db.query(get_sql_commands_from_file('SQL/vegan_search.sql'))
+
+def food_type_query(entity:str):
+    """ Finds restaurants based on cuisine type
+
+    Args
+
+    """
+    food_type_query = db.query(get_sql_commands_from_file('SQL/food_type_search.sql'))
+
+
