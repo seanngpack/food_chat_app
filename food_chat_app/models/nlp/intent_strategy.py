@@ -73,13 +73,16 @@ class NameStrategy(IntentStrategy):
 
         # check food type first
         if foodtype_query is not None:
-            rest_list = []
-            for elem in foodtype_query:
-                rest_list.append(elem['restaurant_name'])
+            rest_list = [rest['restaurant_name'] for rest in foodtype_query]
             rest_list = rest_list[:3]
-            results = ", ".join(str(e) for e in rest_list)
-            
-            response = f'Here are some {entity} restaurants to checkout: {results}'
+
+            results = ''
+            for restaurant in rest_list:
+                # rest_props = db_commands.name_search_query(entity)
+                # rating = rest_props[0]['star_rating'] * '★'
+                # results = results + restaurant + ' ' + rating
+                results += restaurant + ', '            
+            response = f'Here are some {entity} restaurants to check out: {results}'
             return response
             
         # then check is the entity is actually a restaurant name
