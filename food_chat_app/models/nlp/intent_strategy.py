@@ -34,37 +34,6 @@ class ProximityStrategy(IntentStrategy):
 
         return proximityresponse
 
-
-class FoodTypeStrategy(IntentStrategy):
-    def execute(self, entity):
-        if entity == 'Vegan' or entity == 'vegan':
-            vegan_query = db_commands.vegan_query(entity)
-            if type(vegan_query) == list:
-                rest_list=[]
-                for elem in vegan_query:
-                    rest_list.append(elem['restaurant_name'])
-                prompt = "Here are some places with vegan options to checkout:"
-                results = ", ".join( str(e) for e in rest_list ) 
-                
-                return prompt,results
-            else:
-                return "What are you looking for with vegan? Please try searching again."     
-        elif entity != 'Vegan' or entity != 'vegan':
-            foodtype_query = db_commands.food_type_query(import_sql_from_file("SQL/foodtypesearch.sql"),entity)
-            if type(foodtype_query) == list:
-                rest_list=[]
-                for elem in foodtype_query:
-                    rest_list.append(elem['restaurant_name'])
-                prompt = "Here are some restaurants to checkout:"
-                results = ", ".join( str(e) for e in rest_list ) 
-                
-                return prompt,results
-            else:
-                return "Couldn't find what you were looking for, please try again!" 
-        else:
-            return "Sorry, couldn't find that. Please try asking something else."
-
-
 class RatingStrategy(IntentStrategy):
     def execute(self, entity):
         print('rating search' + entity)
@@ -72,8 +41,18 @@ class RatingStrategy(IntentStrategy):
 
 class NameStrategy(IntentStrategy):
     def execute(self, entity):
+        print('NameStrategy')
+        foodtype_query = db_commands.food_type_query(entity)
         name_query = db_commands.name_search_query(entity)
-        if type(name_query) == list: #this ensures that it exists and doesn't result in an empty tuple
+        if foodtype_query is not None:
+            #this becomes a cuisine search
+            rest_list=[]
+            for elem in foodtype_query:
+                rest_list.append(elem['restaurant_name'])
+            prompt = "Here are some restaurants to checkout:"
+            results = ", ".join( str(e) for e in rest_list ) 
+            return prompt,results
+        elif name_query is not None: 
             rest_props = db_commands.rest_props_query(name_query[0]['restaurant_id'])
             review_props = db_commands.review_props_query(name_query[0]['restaurant_id'])
             hour_props = db_commands.hour_props_query(name_query[0]['restaurant_id'])
@@ -106,7 +85,6 @@ class NameStrategy(IntentStrategy):
             first_few_rev=[]
             first_few_rate=[]
             for index in range(len(review_props)-3):
-                
                 first_few_rev.append(review_props[index]['review_content'])
                 first_few_rate.append(review_props[index]['rating'])
             
