@@ -56,11 +56,60 @@ class RatingStrategy(IntentStrategy):
         print('rating search' + entity)
         return 'rating search ' + entity
 
-
 class NameStrategy(IntentStrategy):
     def execute(self, entity):
-        print('name search' + entity)
-        return 'name search ' + entity
+        name_query = db_commands.name_search_query(entity)
+        if type(name_query) == list: #this ensures that it exists and doesn't result in an empty tuple
+            rest_props = db_commands.rest_props_query(name_query[0]['restaurant_id'])
+            review_props = db_commands.review_props_query(name_query[0]['restaurant_id'])
+            hour_props = db_commands.hour_props_query(name_query[0]['restaurant_id'])
+            initial_prompt = "Here is some information we have on: " + entity+". "
+
+            #rest detail section
+            location = rest_props[0]['city']
+            avg_price = rest_props[0]['price_range']
+            reservation = rest_props[0]['reservation']
+            vegan = rest_props[0]['vegan_option']
+            delivery = rest_props[0]['delivery_option']
+            website = rest_props[0]['website']
+
+            if type(delivery) != None and delivery == 1:
+                delivery = "do"
+            else:
+                delivery = "don't"
+            if type(reservation) != None and reservation == 1:
+                reservation = "do take"    
+            else:
+                reservation = "don't take"
+            if type(vegan) != None and vegan == 1:
+                vegan = "do have"
+            else:
+                vegan = "don't have"
+            
+            rest_details = "They are located in " + location + ", have an average price of " + avg_price + ", they " + delivery + " deliver, " + reservation + " reservations and " + vegan + " vegan options." + "Their website is: " + website+ "! "
+
+            #review section
+            first_few_rev=[]
+            first_few_rate=[]
+            for index in range(len(review_props)-3):
+                
+                first_few_rev.append(review_props[index]['review_content'])
+                first_few_rate.append(review_props[index]['rating'])
+            
+            results = "The reviews for "+ entity+ "are: "+ " and ".join( str(e) for e in first_few_rev )+ " Rated at "+" and ".join( str(e) for e in first_few_rate )+" stars."
+
+            #hour section
+            monday = hour_props[0]['monday_hours']
+            tuesday = hour_props[0]['tuesday_hours']
+            wednesday = hour_props[0]['wednesday_hours']
+            thursday = hour_props[0]['thursday_hours']
+            friday = hour_props[0]['friday_hours']
+            open_times = "They are open from: "+ monday+" on Monday, "+ tuesday+ " on Tuesday, "+wednesday+ " on Wednesday, "+thursday+ " on Thursday "+ "and "+ friday+ " on Friday."
+            
+            return initial_prompt+rest_details+open_times+results
+            
+        else:
+            return "We couldn't find what you are looking for. Please be more specific and try searching again." 
 
 
 class RandomStrategy(IntentStrategy):

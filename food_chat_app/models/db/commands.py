@@ -157,10 +157,8 @@ def vegan_query(entity: str):
 
     Args
 
-    '''
-    vegan_query = db.query(get_sql_commands_from_file('SQL/vegan_search.sql'))
-    if vegan_query is not list:
-        return None
+    """
+    vegan_query = db.query(get_sql_commands_from_file('SQL/vegan_search.sql')[0],(entity))
     return vegan_query
 
 
@@ -170,13 +168,27 @@ def food_type_query(entity: str):
     Args:
         food type hopefully
 
-    Returns:
-        a list of restaurants or None if no results
-
-    '''
-    food_type_query = db.query(get_sql_commands_from_file(
-        'SQL/food_type_search.sql'), (entity, ))
-    if food_type_query is not list:
-        return None
+    """
+    food_type_query = db.query(get_sql_commands_from_file('SQL/food_type_search.sql')[0],(entity))
     return food_type_query
+
+def name_search_query(entity:str):
+    """ Finds restaurant id that matches the given name """
+    name_search_query = db.query(get_sql_commands_from_file('SQL/name_search.sql')[0],(entity))
+    return name_search_query
+
+def rest_props_query(entity:str):
+    """ Finds restaurant details  that matches the given id """
+    rest_props_query = db.query(get_sql_commands_from_file('SQL/rest_details.sql')[0],(entity))
+    return rest_props_query
+
+def hours_props_query(entity:str):
+    """ Finds restaurant hours that matches the given id """
+    hours_props_query = db.query(get_sql_commands_from_file('SQL/hours_detail.sql')[0],(entity))
+    return hours_props_query
+
+def review_props_query(entity:str):
+    """ Finds restaurant query review info that matches the given id """
+    review_props_query = db.query(get_sql_commands_from_file('SQL/reviews_details.sql')[0],(entity))
+    return review_props_query
 
