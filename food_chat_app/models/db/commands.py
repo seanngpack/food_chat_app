@@ -1,6 +1,6 @@
 from food_chat_app.models.db.db import DB
 from flask import current_app as app
-import pandas as pd
+
 
 '''Contains commands you can run to the database
 '''
@@ -36,6 +36,7 @@ def drop_all_tables():
 
 
 def insert_data(csv_file: str):
+    import pandas as pd
     '''Inserts data from csv file to the database.
     I guess this basically assumes there's a clean database.
 
