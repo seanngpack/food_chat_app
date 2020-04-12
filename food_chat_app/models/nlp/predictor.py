@@ -5,14 +5,9 @@ from food_chat_app.models.nlp.intent_types import IntentType
 import numpy as np
 import os
 import pickle
-
-from keras.models import Sequential
-from keras.layers import Dense, Activation, Dropout
-from keras.optimizers import SGD
-import nltk
 import os
 import random
-from sklearn.model_selection import train_test_split
+
 
 path = os.path.abspath(__file__)
 dir_path = os.path.dirname(path)
@@ -108,6 +103,7 @@ class Predictor:
             return vocab, classes, document_map
 
     def _build_training_set(self, vocab, classes, document_map):
+        
         '''Build the training set for our DL model using vocab, classes
         and document_map lists.
 
@@ -137,6 +133,10 @@ class Predictor:
         return training
 
     def _build_dl_model(self, training):
+        from keras.models import Sequential
+        from keras.layers import Dense, Activation, Dropout
+        from keras.optimizers import SGD
+        from sklearn.model_selection import train_test_split
         '''Build and save the DL model using our training set.
         layer 1: 128 neurons, relu
         layer 2: 64 neurons, relu
