@@ -15,7 +15,7 @@ ner_tags = collections.Counter()
 path = os.path.abspath(__file__)
 dir_path = os.path.dirname(path)
 
-corpus_root = "/Users/seanngpack/Downloads/gmb-2.2.0"
+# corpus_root = "/Users/seanngpack/Downloads/gmb-2.2.0"
 
 
 class NamedEntityChunker(ChunkParserI):
