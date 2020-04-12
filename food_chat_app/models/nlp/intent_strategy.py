@@ -14,7 +14,7 @@ class IntentStrategy(metaclass=abc.ABCMeta):
 class ProximityStrategy(IntentStrategy):
     def execute(self, entity):
         if entity is None:
-            return 'please type your question again'
+            return 'Please type your question again'
 
         proximity_query = db_commands.proximity_query(entity)
         if proximity_query is not None:
@@ -81,10 +81,10 @@ class NameStrategy(IntentStrategy):
                 # rest_props = db_commands.name_search_query(entity)
                 # rating = rest_props[0]['star_rating'] * '★'
                 # results = results + restaurant + ' ' + rating
-                results += restaurant + ', '            
+                results += restaurant + ', '
             response = f'Here are some {entity} restaurants to check out: {results}'
             return response
-            
+
         # then check is the entity is actually a restaurant name
         elif name_query is not None:
             rest_props = db_commands.rest_props_query(
@@ -102,45 +102,31 @@ class NameStrategy(IntentStrategy):
             else:
                 delivery = "don't"
 
-            response = f'Here is some information we have on {entity} ({price},{rating})! \
+            response = f'Here is some information I have on {entity} ({price},{rating})! \
                 They are located in {location}, and do deliver. Find out more @ {website}'
 
             return response
         else:
-            return "We couldn't find what you are looking for. Please be more specific and try searching again."
+            return "I couldn't find what you are looking for. Please be more specific and try searching again."
 
 
 class RandomStrategy(IntentStrategy):
     def execute(self, entity):
+        print('random stategy')
+        random_query = db_commands.random_query()[0]
+        
+        name = random_query['restaurant_name']
+        city = random_query['city']
+        rating = random_query['star_rating'] * '★'
+        price_range = random_query['price_range']
+        reservation = random_query['reservation']
+        vegan = random_query['vegan_option']
+        delivery = random_query['delivery_option']
+        website = random_query['website']
 
-        random_query = db_commands.random_query()
-        if len(random_query) != 0:
-            for elem in random_query:
-                random_name = elem['restaurant_name']
-                random_city = elem['city']
-                random_starrating = elem['star_rating']
-                random_pricerange = elem['price_range']
-                random_res = elem['reservation']
-                random_veg = elem['vegan_option']
-                random_deliv = elem['delivery_option']
-                random_web = elem['website']
-            prompt = """Would you like to try this restaurant: %s, 
-                        located in: %s, 
-                        star rating: %s, 
-                        price_range: %s, 
-                        offers reservation: %s, 
-                        offers vegan option: %s, 
-                        offers delivery: %s, 
-                        website: %s"""
-            print(prompt % (random_name, random_city, random_starrating, random_pricerange,
-                            random_res, random_veg, random_deliv, random_web))
-        else:
-            RandomStrategy.execute(self, entity)
-
-        responseprompt = (prompt % (random_name, random_city, random_starrating, random_pricerange,
-                                    random_res, random_veg, random_deliv, random_web))
-        print(responseprompt)
-        return responseprompt
+        response = f'How about {name} ({price_range},{rating})? \
+            They are located in {city}, and do deliver. Find out more @ {website}'
+        return response
 
 
 class NullStrategy(IntentStrategy):
