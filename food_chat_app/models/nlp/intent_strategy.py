@@ -13,31 +13,28 @@ class IntentStrategy(metaclass=abc.ABCMeta):
 
 class ProximityStrategy(IntentStrategy):
     def execute(self, entity):
+        print('proximity strategy')
+        if entity is not None:
+            return self._search(entity)
         if entity is None:
-            return 'Please type your question again'
+            return self._search('boston')
 
+    def _search(self, entity):
         proximity_query = db_commands.proximity_query(entity)
-        if proximity_query is not None:
-            proximity_list = [elem['restaurant_name']
-                              for elem in proximity_query]
-            shuffle_list = random.sample(proximity_list, len(proximity_list))
-            prompt = 'Here are some restaurants to checkout in '+entity+': '
-            # print(shuffle_list)
-            if len(shuffle_list) > 10:
-                results = ','.join(shuffle_list[0:10])
-            else:
-                results = ','.join(shuffle_list)
-            proximityresponse = (prompt+results)
-        else:
-            proximityresponse = "Sorry, no restaurants found in: " + \
-                entity+". Please try searching again."
+        if proximity_query is None:
+            return f'Sorry, I couldn\'t find restaurants in {entity}'
 
-        return proximityresponse
+        rest_list = [rest['restaurant_name'] for rest in proximity_query]
+        rest_list = rest_list[:3]
+        response = f'Here are some restaurants to checkout in {entity}: '
+        for restaurant in rest_list:
+            response += restaurant + ', '
+        return response
 
 
 class RatingStrategy(IntentStrategy):
     def execute(self, entity):
-        print("Entering Rating Strategy")
+        print("rating strat")
         if entity is None:
             return 'please type your question again'
         rating_query = db_commands.rating_query(entity)
@@ -114,7 +111,7 @@ class RandomStrategy(IntentStrategy):
     def execute(self, entity):
         print('random stategy')
         random_query = db_commands.random_query()[0]
-        
+
         name = random_query['restaurant_name']
         city = random_query['city']
         rating = random_query['star_rating'] * '★'
@@ -145,5 +142,5 @@ class GratitudeStrategy(IntentStrategy):
     def execute(self, entity):
         print('gratitude strat')
         responses = ['Happy to help!', 'You\'re welcome!', 'No problem',
-        'Super, ask me more questions when you\'re ready!']
+                     'Super, ask me more questions when you\'re ready!']
         return random.choice(responses)
