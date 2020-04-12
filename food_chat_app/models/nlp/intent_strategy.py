@@ -62,33 +62,35 @@ class RatingStrategy(IntentStrategy):
         return rating_response
 
 
-
-
 class NameStrategy(IntentStrategy):
     def execute(self, entity):
-        print('NameStrategy')
-        print(entity)
+        print('name strategy')
+        if entity is None:
+            print('Sorry, please search again')
+
         foodtype_query = db_commands.food_type_query(entity)
         name_query = db_commands.name_search_query(entity)
+
+        # check food type first
         if foodtype_query is not None:
-            #this becomes a cuisine search
-            rest_list=[]
+            rest_list = []
             for elem in foodtype_query:
                 rest_list.append(elem['restaurant_name'])
-            prompt = "Here are some restaurants to checkout:"
-            results = ", ".join( str(e) for e in rest_list ) 
-            return prompt + results
-        elif name_query is not None: 
-            rest_props = db_commands.rest_props_query(name_query[0]['restaurant_id'])
-            review_props = db_commands.review_props_query(name_query[0]['restaurant_id'])
-            hour_props = db_commands.hour_props_query(name_query[0]['restaurant_id'])
-            initial_prompt = "Here is some information we have on: " + entity+". "
+            rest_list = rest_list[:3]
+            results = ", ".join(str(e) for e in rest_list)
+            
+            response = f'Here are some {entity} restaurants to checkout: {results}'
+            return response
+            
+        # then check is the entity is actually a restaurant name
+        elif name_query is not None:
+            rest_props = db_commands.rest_props_query(
+                name_query[0]['restaurant_id'])
 
             # rest detail section
             location = rest_props[0]['city']
-            avg_price = rest_props[0]['price_range']
-            reservation = rest_props[0]['reservation']
-            vegan = rest_props[0]['vegan_option']
+            price = rest_props[0]['price_range']
+            rating = rest_props[0]['star_rating'] * '★'
             delivery = rest_props[0]['delivery_option']
             website = rest_props[0]['website']
 
@@ -96,39 +98,11 @@ class NameStrategy(IntentStrategy):
                 delivery = "do"
             else:
                 delivery = "don't"
-            if type(reservation) != None and reservation == 1:
-                reservation = "do take"
-            else:
-                reservation = "don't take"
-            if type(vegan) != None and vegan == 1:
-                vegan = "do have"
-            else:
-                vegan = "don't have"
-            rest_prompt = " They are located in %s, have an average price of %s,they %s deliver, %s reservations and %s vegan options. Their website is: %s! "
-            rest_details = (rest_prompt % (location, avg_price, delivery, reservation,vegan,website))
-            #review section
-            first_few_rev=[]
-            first_few_rate=[]
-            for index in range(len(review_props)-3):
-                first_few_rev.append(review_props[index]['review_content'])
-                first_few_rate.append(review_props[index]['rating'])
 
-            results = "The reviews for " + entity + "are: " + \
-                " and ".join(str(e) for e in first_few_rev) + " Rated at " + \
-                " and ".join(str(e) for e in first_few_rate)+" stars."
+            response = f'Here is some information we have on {entity} ({price},{rating})! \
+                They are located in {location}, and do deliver. Find out more @ {website}'
 
-            # hour section
-            monday = hour_props[0]['monday_hours']
-            tuesday = hour_props[0]['tuesday_hours']
-            wednesday = hour_props[0]['wednesday_hours']
-            thursday = hour_props[0]['thursday_hours']
-            friday = hour_props[0]['friday_hours']
-            open_times = "They are open from: " + monday+" on Monday, " + tuesday + " on Tuesday, " + \
-                wednesday + " on Wednesday, "+thursday + \
-                " on Thursday " + "and " + friday + " on Friday."
-
-            return initial_prompt+rest_details+open_times+results
-
+            return response
         else:
             return "We couldn't find what you are looking for. Please be more specific and try searching again."
 
