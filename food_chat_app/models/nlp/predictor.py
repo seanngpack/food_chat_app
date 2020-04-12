@@ -58,11 +58,11 @@ class Predictor:
 
         '''
 
-        vocab, classes, document_map = self.process_intents()
-        training = self.build_training_set(vocab, classes, document_map)
-        self.build_dl_model(training)
+        vocab, classes, document_map = self._process_intents()
+        training = self._build_training_set(vocab, classes, document_map)
+        self._build_dl_model(training)
 
-    def process_intents(self):
+    def _process_intents(self):
         '''Creates the vocab & classes lists and the document_map dict.
         Also pickles the vocab and classes list to be used later in our model.
 
@@ -107,7 +107,7 @@ class Predictor:
 
             return vocab, classes, document_map
 
-    def build_training_set(self, vocab, classes, document_map):
+    def _build_training_set(self, vocab, classes, document_map):
         '''Build the training set for our DL model using vocab, classes
         and document_map lists.
 
@@ -136,7 +136,7 @@ class Predictor:
         training = np.array(training)
         return training
 
-    def build_dl_model(self, training):
+    def _build_dl_model(self, training):
         '''Build and save the DL model using our training set.
         layer 1: 128 neurons, relu
         layer 2: 64 neurons, relu
