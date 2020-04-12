@@ -50,16 +50,13 @@ class RatingStrategy(IntentStrategy):
             rest_id = [elem['restaurant_id']for elem in rating_query]
             rating_list = [elem['star_rating']for elem in rating_query]
             overall_starrating = "The overall rating for "+entity+" is "+ str(rating_list[0])
-            print(overall_starrating)
         else:
             overall_starrating = "Sorry, There is no overall rating for this restaurant. Please try searching again"
-        review_query = self.foodly_db.query(get_sql_commands_from_file('SQL/rating_search.sql')[1], (rest_id[0], ))
+        review_query = db_commands.user_rating_query(rest_id[0])
         if review_query is not None:
             user_review = [elem['review_content']for elem in review_query]
             user_rating = [elem['rating']for elem in review_query]
-            print(user_rating)
             user_starrating = "Here is a review from a visitor: "+ user_review[0] + "\nAnd the star rating the visitor gave for the restaurant: "+str(user_rating[0])
-            print(user_starrating)
         else:
             user_starrating = "Sorry, There are no reviews or ratings for this restaurant. Please try searching again"
         rating_response = overall_starrating+"\n"+user_starrating

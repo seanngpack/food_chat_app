@@ -136,7 +136,7 @@ def rating_query(entity: str):
     else:
         return rating_query
 
-def user_rating_query()
+def user_rating_query(entity: str )
 '''Find user review and user rating given a restaurant id. 
 
     Args:
