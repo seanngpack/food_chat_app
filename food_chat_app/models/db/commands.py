@@ -78,7 +78,7 @@ def insert_data(csv_file: str):
         else:
             dish_list = []
 
-        pop_list = parse_popular(getattr(row, 'popular_dishes'))
+        pop_list = _parse_popular(getattr(row, 'popular_dishes'))
 
         # insert the reviews
         for i in range(len(rev_list)):
@@ -101,7 +101,7 @@ def insert_data(csv_file: str):
         db.commit()
 
 
-def parse_popular(pop_list: str):
+def _parse_popular(pop_list: str):
     """ helper function that returns a list of popular or not dishes"""
     if type(pop_list) != str:
         popularity = []
@@ -117,3 +117,26 @@ def parse_popular(pop_list: str):
             else:
                 popularity[index] = None
     return popularity
+
+
+def proximity_query(entity: str):
+    '''Find restaurants given a city or location.
+
+    Args:
+        location
+
+    Returns:
+        a list of restaurants or null
+
+    '''
+
+    proximity_query = db.query(get_sql_commands_from_file('SQL/proximitysearch.sql'), entity)
+    return proximity_query
+
+def random_query():
+    '''
+
+    '''
+    
+    random_search = db.query(get_sql_commands_from_file('SQL/random_search.sql'))
+    return random_search

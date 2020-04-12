@@ -4,6 +4,7 @@ import random
 import csv
 from csv import reader
 
+
 class IntentStrategy(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def execute(self, entity):
@@ -11,25 +12,27 @@ class IntentStrategy(metaclass=abc.ABCMeta):
 
 
 class ProximityStrategy(IntentStrategy):
-    def __init__(self):
-        self.foodly_db = DB()
     def execute(self, entity):
-        self.foodly_db.execute("USE food_chat_db")
-        proximity_query = self.foodly_db.query(import_sql_from_file('SQL/proximitysearch.sql'),entity)
+        if entity is None:
+            return 'please type your question again'
+
+        proximity_query = db_commands.proximity_query(entity)
         if len(proximity_query) != 0:
-            proximity_list=[elem['restaurant_name'] for elem in proximity_query]
-            shuffle_list = random.sample(proximity_list,len(proximity_list))
+            proximity_list = [elem['restaurant_name']
+                              for elem in proximity_query]
+            shuffle_list = random.sample(proximity_list, len(proximity_list))
             prompt = 'Here are some restaurants to checkout in '+entity+': '
-            #print(shuffle_list)
-            if len(shuffle_list)>10:
+            # print(shuffle_list)
+            if len(shuffle_list) > 10:
                 results = ','.join(shuffle_list[0:10])
             else:
                 results = ','.join(shuffle_list)
             proximityresponse = (prompt+results)
         else:
-            proximityresponse = "Sorry, no restaurants found in: "+entity+". Please try searching again."
-        print(proximityresponse)
-        return(proximityresponse)
+            proximityresponse = "Sorry, no restaurants found in: " + \
+                entity+". Please try searching again."
+
+        return proximityresponse
 
 
 class FoodTypeStrategy(IntentStrategy):
@@ -51,16 +54,10 @@ class NameStrategy(IntentStrategy):
 
 
 class RandomStrategy(IntentStrategy):
-    def __init__(self):
-        self.foodly_db = DB()
     def execute(self, entity):
-        self.foodly_db.execute("USE food_chat_db")
-        csvfile = open("test_rest_data.csv")
-        reader = csv.reader(csvfile)
-        lines= len(list(reader))
-        randomID = random.randint(1,lines)
-        random_query = self.foodly_db.query(import_sql_from_file('SQL/randomsearch_byid.sql'),str(randomID))
-        if len(random_query)!=0:
+        
+        random_query = db_commands.random_query()
+        if len(random_query) != 0:
             for elem in random_query:
                 random_name = elem['restaurant_name']
                 random_city = elem['city']
@@ -78,15 +75,16 @@ class RandomStrategy(IntentStrategy):
                         offers vegan option: %s, 
                         offers delivery: %s, 
                         website: %s"""
-            print(prompt % (random_name,random_city, random_starrating, random_pricerange, 
-            random_res, random_veg, random_deliv, random_web))
+            print(prompt % (random_name, random_city, random_starrating, random_pricerange,
+                            random_res, random_veg, random_deliv, random_web))
         else:
-            RandomStrategy.execute(self,entity)
-        
-        responseprompt = (prompt % (random_name,random_city, random_starrating, random_pricerange, 
-            random_res, random_veg, random_deliv, random_web))
+            RandomStrategy.execute(self, entity)
+
+        responseprompt = (prompt % (random_name, random_city, random_starrating, random_pricerange,
+                                    random_res, random_veg, random_deliv, random_web))
         print(responseprompt)
         return responseprompt
+
 
 class NullStrategy(IntentStrategy):
     def execute(self, entity):
