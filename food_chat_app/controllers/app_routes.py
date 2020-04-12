@@ -76,5 +76,7 @@ def intent_to_strat(intent: str):
         return RandomStrategy()
     elif intent == IntentType.restaurant_null_search:
         return NullStrategy()
+    elif intent == IntentType.update_database:
+        return UpdateStrategy()
     elif intent == IntentType.gratitude:
         return GratitudeStrategy()

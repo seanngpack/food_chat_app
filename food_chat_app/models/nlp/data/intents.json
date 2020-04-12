@@ -20,6 +20,9 @@
         {"intent": "restaurant_null_search",
         "utterances": []
         },
+        {"intent": "update_database",
+                "utterances": ["refresh the database", "update search results"]
+                },
         {"intent": "gratitude",
         "utterances": ["Thanks", "Thank you", "That's helpful", "Awesome, thanks", "Thanks for helping me", "cool"]
         }

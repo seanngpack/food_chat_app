@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `city`        varchar(255)
 );
 
-CREATE TABLE IF NOT EXISTS `messages` (
+CREATE TABLE IF NOT EXISTS `message` (
   `message_id`      int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `user_id`         int(11) NOT NULL,
   `message_cotent`  varchar(255),

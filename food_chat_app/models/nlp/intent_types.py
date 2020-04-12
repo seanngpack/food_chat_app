@@ -7,4 +7,5 @@ class IntentType(enum.Enum):
     restaurant_search_by_name = 'restaurant_search_by_name'
     restaurant_random_search = 'restaurant_random_search'
     restaurant_null_search = 'restaurant_null_search'
+    update_database = 'update_database'
     gratitude = 'gratitude'

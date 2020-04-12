@@ -149,6 +149,10 @@ class NullStrategy(IntentStrategy):
         print('null search' + entity)
         return 'null search ' + entity
 
+class UpdateStrategy(IntentStrategy):
+    def execute(self, entity):
+        print('update strategy')
+        return 'Updating database with new results...'
 
 class GratitudeStrategy(IntentStrategy):
     def execute(self, entity):
