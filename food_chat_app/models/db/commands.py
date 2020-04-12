@@ -130,7 +130,8 @@ def proximity_query(entity: str):
 
     '''
 
-    proximity_query = db.query(get_sql_commands_from_file('SQL/proximitysearch.sql'), entity)
+    proximity_query = db.query(get_sql_commands_from_file('SQL/proximity_search.sql')[0], (entity))
+    
     return proximity_query
 
 def random_query():
