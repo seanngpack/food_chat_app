@@ -146,20 +146,10 @@ def random_query():
 
     random_search = db.query(
         get_sql_commands_from_file('SQL/random_search.sql'))
-    if random_search is not list:
+    if type(random_search) is not list:
         return None
     else:
         return random_search
-
-
-def vegan_query(entity: str):
-    ''' Finds restaurants based on vegan or not
-
-    Args
-
-    """
-    vegan_query = db.query(get_sql_commands_from_file('SQL/vegan_search.sql')[0],(entity))
-    return vegan_query
 
 
 def food_type_query(entity: str):
@@ -168,27 +158,51 @@ def food_type_query(entity: str):
     Args:
         food type hopefully
 
-    """
-    food_type_query = db.query(get_sql_commands_from_file('SQL/food_type_search.sql')[0],(entity))
-    return food_type_query
+    '''
 
-def name_search_query(entity:str):
-    """ Finds restaurant id that matches the given name """
-    name_search_query = db.query(get_sql_commands_from_file('SQL/name_search.sql')[0],(entity))
-    return name_search_query
+    food_type_query = db.query(get_sql_commands_from_file(
+        'SQL/food_type_search.sql')[0], (entity, ))
+    if type(food_type_query) is not list:
+        return None
+    else:
+        return food_type_query
 
-def rest_props_query(entity:str):
-    """ Finds restaurant details  that matches the given id """
-    rest_props_query = db.query(get_sql_commands_from_file('SQL/rest_details.sql')[0],(entity))
-    return rest_props_query
 
-def hours_props_query(entity:str):
-    """ Finds restaurant hours that matches the given id """
-    hours_props_query = db.query(get_sql_commands_from_file('SQL/hours_detail.sql')[0],(entity))
-    return hours_props_query
+def name_search_query(entity: str):
+    ''' Finds restaurant id that matches the given name '''
+    name_search_query = db.query(get_sql_commands_from_file(
+        'SQL/name_search.sql')[0], (entity, ))
+    if type(name_search_query) is not list:
+        return None
+    else:
+        return name_search_query
 
-def review_props_query(entity:str):
-    """ Finds restaurant query review info that matches the given id """
-    review_props_query = db.query(get_sql_commands_from_file('SQL/reviews_details.sql')[0],(entity))
-    return review_props_query
 
+def rest_props_query(entity: str):
+    ''' Finds restaurant details  that matches the given id '''
+    rest_props_query = db.query(get_sql_commands_from_file(
+        'SQL/rest_details.sql')[0], (entity, ))
+    if type(rest_props_query) is not list:
+        return None
+    else:
+        return rest_props_query
+
+
+def hours_props_query(entity: str):
+    ''' Finds restaurant hours that matches the given id '''
+    hours_props_query = db.query(get_sql_commands_from_file(
+        'SQL/hours_detail.sql')[0], (entity, ))
+    if type(hours_props_query) is not list:
+        return None
+    else:
+        return hours_props_query
+
+
+def review_props_query(entity: str):
+    ''' Finds restaurant query review info that matches the given id '''
+    review_props_query = db.query(get_sql_commands_from_file(
+        'SQL/reviews_details.sql')[0], (entity, ))
+    if type(review_props_query) is not list:
+        return None
+    else:
+        return review_props_query
