@@ -16,3 +16,4 @@ class Config:
     MYSQL_DATABASE_DB = os.environ.get('DB_NAME')
     MYSQL_DATABASE_USER = os.environ.get('DB_USER')
     MYSQL_DATABASE_HOST = os.environ.get('DB_HOST')
+    MYSQL_DATABASE_PASSWORD = os.environ.get('DB_PASS')
