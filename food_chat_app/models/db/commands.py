@@ -117,3 +117,6 @@ def parse_popular(pop_list: str):
             else:
                 popularity[index] = None
     return popularity
+
+
+def rating_search():
