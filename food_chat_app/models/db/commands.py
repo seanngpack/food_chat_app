@@ -119,4 +119,36 @@ def parse_popular(pop_list: str):
     return popularity
 
 
-def rating_search():
+def rating_query(entity: str):
+    '''Find rating given a restaurant.
+
+    Args:
+        restaurant name
+
+    Returns:
+        a list of rating for a restaurant or None if no results
+
+    '''
+    rating_query = db.query(get_sql_commands_from_file('SQL/rating_search.sql')[0], (entity, ))
+
+    if type(rating_query) is not list:
+        return None
+    else:
+        return rating_query
+
+def user_rating_query()
+'''Find user review and user rating given a restaurant id. 
+
+    Args:
+        restaurant name
+
+    Returns:
+        a list of user review and user rating for a restaurant or None if no results
+
+    '''
+    user_rating_query = db.query(get_sql_commands_from_file('SQL/rating_search.sql')[1], (entity, ))
+
+    if type(user_rating_query) is not list:
+        return None
+    else:
+        return user_rating_query

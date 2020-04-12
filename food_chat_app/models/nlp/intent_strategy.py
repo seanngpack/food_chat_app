@@ -42,20 +42,17 @@ class FoodTypeStrategy(IntentStrategy):
 
 class RatingStrategy(IntentStrategy):
     def execute(self, entity):
+        print("Entering Rating Strategy")
         if entity is None:
             return 'please type your question again'
-        proximity_query = db_commands.proximity_query(entity)
-        rating_query = db_commands.proximity_query(entity)
-        rating_query = self.foodly_db.query(get_sql_commands_from_file('SQL/rating_search.sql')[0], (entity, ))
-        print(rating_query)
+        rating_query = db_commands.rating_query(entity)
         if rating_query is not None:
             rest_id = [elem['restaurant_id']for elem in rating_query]
             rating_list = [elem['star_rating']for elem in rating_query]
             overall_starrating = "The overall rating for "+entity+" is "+ str(rating_list[0])
             print(overall_starrating)
         else:
-            print("Sorry, There is no overall rating for this restaurant. Please try searching again")
-            return "Sorry, There is no overall rating for this restaurant. Please try searching again"
+            overall_starrating = "Sorry, There is no overall rating for this restaurant. Please try searching again"
         review_query = self.foodly_db.query(get_sql_commands_from_file('SQL/rating_search.sql')[1], (rest_id[0], ))
         if review_query is not None:
             user_review = [elem['review_content']for elem in review_query]
@@ -63,12 +60,11 @@ class RatingStrategy(IntentStrategy):
             print(user_rating)
             user_starrating = "Here is a review from a visitor: "+ user_review[0] + "\nAnd the star rating the visitor gave for the restaurant: "+str(user_rating[0])
             print(user_starrating)
-        print(overall_starrating+"\n"+user_starrating)
-        return 'rating search ' + entity
-
-
-        print('rating search' + entity)
-        return 'rating search ' + entity
+        else:
+            user_starrating = "Sorry, There are no reviews or ratings for this restaurant. Please try searching again"
+        rating_response = overall_starrating+"\n"+user_starrating
+        print(rating_response)
+        return rating_response
 
 
 class NameStrategy(IntentStrategy):
