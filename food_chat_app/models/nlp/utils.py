@@ -88,7 +88,6 @@ def get_pos(word):
 
 def extract_entity(sentence: str):
     chunker = NamedEntityChunker()
-
     chunked = chunker.parse(nltk.pos_tag(nltk.word_tokenize(sentence)))
     return chunked
 
@@ -100,9 +99,12 @@ def get_named_entity(chunked):
 
     ex. (geo Germany/NNP) -> Germany
 
+    Returns:
+        None if there is no entity
+
     '''
 
-    backup = ''
+    backup = None
     for chunk in chunked:
         if hasattr(chunk, 'label'):
             #  print(chunk.label(), ' '.join(c[0] for c in chunk))
