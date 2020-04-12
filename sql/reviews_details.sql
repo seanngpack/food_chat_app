@@ -1,0 +1,1 @@
+SELECT review_content,rating FROM review WHERE restaurant_id = %s;

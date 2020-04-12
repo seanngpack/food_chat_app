@@ -1,1 +1,2 @@
-SELECT restaurant_name FROM restaurant WHERE restaurant_name = %s;
+SELECT restaurant_id FROM restaurant WHERE restaurant_name = %s;
+
