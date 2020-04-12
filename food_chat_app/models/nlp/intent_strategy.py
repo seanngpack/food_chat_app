@@ -131,8 +131,8 @@ class RandomStrategy(IntentStrategy):
 
 class NullStrategy(IntentStrategy):
     def execute(self, entity):
-        print('null search' + entity)
-        return 'null search ' + entity
+        print('Null strat')
+        return 'Sorry, please rephrase your question!'
 
 
 class UpdateStrategy(IntentStrategy):
@@ -143,5 +143,7 @@ class UpdateStrategy(IntentStrategy):
 
 class GratitudeStrategy(IntentStrategy):
     def execute(self, entity):
-        print('gratitude' + entity)
-        return 'gratitude ' + entity
+        print('gratitude strat')
+        responses = ['Happy to help!', 'You\'re welcome!', 'No problem',
+        'Super, ask me more questions when you\'re ready!']
+        return random.choice(responses)
