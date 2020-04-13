@@ -44,9 +44,12 @@ class RatingStrategy(IntentStrategy):
         rating_query = db_commands.rating_query(entity)
         # if the restaurant is recognized
         if rating_query is not None:
-            rest_name = star_rating = rating_query[0]['restaurant_name']
-            star_rating = rating_query[0]['star_rating'] * '★'
-            review_content = rating_query[0]['review_content'][:50] + '...'
+            # select random review
+            info = random.choice(rating_query)
+            rest_name = star_rating = info['restaurant_name']
+            star_rating = info['star_rating'] * '★'
+            review_content = info['review_content'][:50] + '...'
+            
             response = f'{rest_name} has a an average rating of {star_rating}. \
                 here is what one customer has to say: {review_content}'
         # if the restaurant is recognized but here's no reviews in the DB
