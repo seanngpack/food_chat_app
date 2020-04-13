@@ -38,9 +38,8 @@ class RatingStrategy(IntentStrategy):
         print("rating strat")
         # could not find the restaurant name
         if entity is None:
-            return 'Sorry, you are looking for reviews on a restaurant but I \
-            couldn\'t recognize the restaurant name.'
-        
+            return 'Sorry, you are looking for reviews on a restaurant but I couldn\'t recognize the restaurant name.'
+
         rating_query = db_commands.rating_query(entity)
         # if the restaurant is recognized
         if rating_query is not None:
@@ -49,9 +48,8 @@ class RatingStrategy(IntentStrategy):
             rest_name = star_rating = info['restaurant_name']
             star_rating = info['star_rating'] * '★'
             review_content = info['review_content'][:50] + '...'
-            
-            response = f'{rest_name} has a an average rating of {star_rating}. \
-                here is what one customer has to say: {review_content}'
+
+            response = f'{rest_name} has a an average rating of {star_rating}. Here is what one customer has to say: {review_content}'
         # if the restaurant is recognized but here's no reviews in the DB
         else:
             random_query = db_commands.random_query()[0]
@@ -59,7 +57,7 @@ class RatingStrategy(IntentStrategy):
             city = random_query['city']
             rating = random_query['star_rating'] * '★'
             return f'Sorry, could not find reviews for {entity}, \
-            so here\'s another highly rated restaurant: {name} ({rating}) and it\'s in {city}'
+                so here\'s another highly rated restaurant: {name} ({rating}) and it\'s in {city}'
         return response
 
 
@@ -85,7 +83,7 @@ class NameStrategy(IntentStrategy):
             response = f'Here are some {entity} restaurants to check out: {results}'
             return response
 
-        #then check out if they are talking about a vegan restaurant
+        # then check out if they are talking about a vegan restaurant
         if (str.lower(entity) == 'vegan'):
             vegan_query = db_commands.vegan_query(entity)
             rest_list = [rest['restaurant_name'] for rest in vegan_query]
@@ -106,7 +104,7 @@ class NameStrategy(IntentStrategy):
             # rest detail section
             name = rest_props[0]['restaurant_name']
             location = rest_props[0]['city']
-            price = rest_props[0]['price_range']
+            price = int(rest_props[0]['price_range']) * '$'
             rating = rest_props[0]['star_rating'] * '★'
             delivery = rest_props[0]['delivery_option']
             website = rest_props[0]['website']
@@ -132,7 +130,7 @@ class RandomStrategy(IntentStrategy):
         name = random_query['restaurant_name']
         city = random_query['city']
         rating = random_query['star_rating'] * '★'
-        price_range = random_query['price_range']
+        price_range = int(random_query['price_range']) * '$'
         reservation = random_query['reservation']
         vegan = random_query['vegan_option']
         delivery = random_query['delivery_option']
@@ -160,11 +158,14 @@ class DeleteStrategy(IntentStrategy):
         db_commands.delete_message()
         return 'deleted records of our conversation...'
 
+
 class GreetingStrategy(IntentStrategy):
     def execute(self, entity):
         print('greeting strat')
-        responses = ['Welcome, ask me food-related questions!', 'Hello there', 'Hi!', 'Greetings, human']
+        responses = ['Welcome, ask me food-related questions!',
+                     'Hello there', 'Hi!', 'Greetings, human']
         return random.choice(responses)
+
 
 class GratitudeStrategy(IntentStrategy):
     def execute(self, entity):
