@@ -36,9 +36,9 @@ def test_update(predictor):
     assert predictor.predict_intent("update the database") == IntentType.update_database
 
 def test_delete(predictor):
-    assert predictor.predict_intent_verbose("delete our messages") == IntentType.delete
-    assert predictor.predict_intent_verbose("delete our conversation") == IntentType.delete
+    assert predictor.predict_intent("delete our messages") == IntentType.delete
+    assert predictor.predict_intent("delete our conversation") == IntentType.delete
 
 def test_gratitude(predictor):
-    assert predictor.predict_intent_verbose("thanks!") == IntentType.gratitude
-    assert predictor.predict_intent_verbose("cool") == IntentType.gratitude
+    assert predictor.predict_intent("thanks!") == IntentType.gratitude
+    assert predictor.predict_intent("cool") == IntentType.gratitude
