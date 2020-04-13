@@ -139,6 +139,7 @@ class UpdateStrategy(IntentStrategy):
 
 class DeleteStrategy(IntentStrategy):
     def execute(self, entity):
+        db_commands.delete_message()
         return 'deleted records of our conversation...'
 
 

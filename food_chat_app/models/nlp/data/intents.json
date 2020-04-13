@@ -22,6 +22,9 @@
         {"intent": "update_database",
                 "utterances": ["refresh the database", "update search results", "scrape for more data", "update the database"]
                 },
+        {"intent": "delete",
+                "utterances": ["delete messages", "delete our conversation"]
+                },
         {"intent": "gratitude",
         "utterances": ["Thanks!", "Thank you", "That's helpful", "Awesome, thanks", "Thanks for helping me", "cool"]
         }

@@ -313,3 +313,11 @@ def insert_message(user_id: str, message: str):
 
     message_insert = get_sql_commands_from_file('SQL/insert_message.sql')[0]
     db.execute(message_insert, (user_id, message,))
+
+
+def delete_message():
+    '''Deletes all messages from message table
+
+    '''
+    delete = get_sql_commands_from_file('SQL/delete_message.sql')[0]
+    db.execute(delete, ())
