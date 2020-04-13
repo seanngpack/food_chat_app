@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS `restaurant` (
   `reservation` boolean,
   `vegan_option` boolean,
   `delivery_option`     boolean,
-  `website`     VARCHAR(255)
+  `website`     VARCHAR(255),
+  `updated`     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS `user` (
