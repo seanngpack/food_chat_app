@@ -8,4 +8,5 @@ class IntentType(enum.Enum):
     restaurant_null_search = 'restaurant_null_search'
     update_database = 'update_database'
     delete = 'delete'
+    greeting = 'greeting'
     gratitude = 'gratitude'

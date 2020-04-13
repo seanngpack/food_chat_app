@@ -42,3 +42,7 @@ def test_delete(predictor):
 def test_gratitude(predictor):
     assert predictor.predict_intent("thanks!") == IntentType.gratitude
     assert predictor.predict_intent("cool") == IntentType.gratitude
+
+def test_greeting(predictor):
+    assert predictor.predict_intent("hi") == IntentType.greeting
+    assert predictor.predict_intent("Hello") == IntentType.greeting

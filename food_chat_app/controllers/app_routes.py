@@ -85,5 +85,7 @@ def intent_to_strat(intent: str):
         return UpdateStrategy()
     elif intent == IntentType.delete:
         return DeleteStrategy()
+    elif intent == IntentType.greeting:
+        return GreetingStrategy()
     elif intent == IntentType.gratitude:
         return GratitudeStrategy()
