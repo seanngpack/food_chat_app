@@ -39,19 +39,38 @@ class Predictor:
     def predict_intent(self, sentence):
         bow_sentence = utils.sentence_to_bow_vector(sentence, self.vocab)
 
-        result = self.nlp_model.predict(bow_sentence.reshape(1, -1))
+        result = self.nlp_model.predict(bow_sentence.reshape(1, -1))[0]
 
         # print(result[0])
         max = 0
-        index = 0
+        max_index = 0
         # print(self.classes)
-        for i in range(0, result[0].size):
+        for i in range(0, result.size):
             # print("intent:" + str(self.classes[i]) + " -- " +
             #  str(np.around(result[0][i]* 100, decimals=2)) + '%')
-            if result[0][i]*100 > max:
-                max = result[0][i]
-                index = i
-        return IntentType(self.classes[index])
+            if result[i]> max:
+                max = result[i]
+                max_index = i
+        return IntentType(self.classes[max_index])
+
+    
+    def predict_intent_verbose(self, sentence):
+        bow_sentence = utils.sentence_to_bow_vector(sentence, self.vocab)
+
+        result = self.nlp_model.predict(bow_sentence.reshape(1, -1))[0]
+
+        # print(result[0])
+        max = 0
+        max_index = 0
+        # print(self.classes)
+        for i in range(0, result.size):
+            print("intent:" + str(self.classes[i]) + " -- " +
+             str(np.around(result[i]* 100, decimals=2)) + '%')
+            if result[i] > max:
+                max = result[i]
+                max_index = i
+        print(self.classes[max_index] + ': confidence ' + str(result[max_index]* 100))
+        return IntentType(self.classes[max_index])
 
     def build(self):
         '''Build the model!!!
