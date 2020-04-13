@@ -18,4 +18,8 @@ def test_entity():
     chunk = utils.extract_entity("I want to eat chinese food")
     named = utils.get_named_entity(chunk)
     assert named == 'chinese'
+
+    chunk = utils.extract_entity("food nearby")
+    named = utils.get_named_entity(chunk)
+    assert named == None
     

@@ -107,7 +107,7 @@ def get_named_entity(chunked):
     # for chunk in chunked:
     #     print(chunk)
 
-    stop_words = ['restaurant', 'restaurants', 'i']
+    stop_words = ['restaurant', 'restaurants', 'i', 'review', 'reviews', 'food']
     # for chunk in chunked:
     #     print(chunk)
     backup = None
@@ -122,7 +122,7 @@ def get_named_entity(chunked):
         # second choice backup, adjective
         elif chunk[1] == 'JJ':
             return chunk[0]
-        # third choice backup, jut a singular noun
-        elif chunk[1] == 'NN':
+        # third choice backup, just a singular noun
+        elif chunk[1] == 'NN' and chunk[0] not in stop_words:
             return chunk[0]
     return backup
