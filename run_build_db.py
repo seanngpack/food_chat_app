@@ -1,4 +1,3 @@
-import food_chat_app.models.db.commands as commands
 from config import Config
 import pymysql
 
@@ -44,7 +43,7 @@ def create_db():
             print('database already exists, maybe you want to drop it instead')
             return
 
-    cursor.execute(f'USE {config.MYSQL_DATABASE_DB}')
+    
     sql_commands = get_sql_commands_from_file('sql/create_all_tables.sql')
     for cmd in sql_commands:
         cursor.execute(cmd)
