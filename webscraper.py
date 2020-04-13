@@ -28,9 +28,9 @@ def check_if_popular(pop_list, menu_list):
     pop_dishes = ', '.join(map(str,popular))
     return pop_dishes
 
-def get_restaurants():
+def get_restaurants(start,end):
     rest_URL = [] #get list of URL for each page of 30 restaurants
-    for i in range(0,500,30):
+    for i in range(start,end,30):
         URL = "https://www.yelp.com/search?find_desc=Restaurants&find_loc=Boston%2C%20MA&start="+str(i)
         rest_URL.append(URL)
     return rest_URL
@@ -274,7 +274,7 @@ def enter_yelp_page(test_yelp_url):
 if __name__ == "__main__":
     
     print("threadstart", datetime.now().time())
-    restaurant_URL_list = get_restaurants()
+    restaurant_URL_list = get_restaurants(100,700)
     #print(restaurant_URL_list)
 
     with PoolExecutor(max_workers=6) as executor:
