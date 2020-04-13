@@ -1,7 +1,7 @@
 {"intents": [
         {"intent": "restaurant_proximity_search",
          "utterances": ["Food near me?", "restaurant nearby", "restaurants close to me", "What should I eat that is nearby?", 
-                "I am looking for food close to me", "Restaurants in Boston"]
+                "I am looking for food close to me", "Restaurants in Boston", "restaurants in quincy"]
         },
         {"intent": "restaurant_rating_search",
          "utterances": ["I want to eat at a highly rated restaurant", "highly rated restaurants", "Any good reviewed restaurants?",
@@ -10,11 +10,12 @@
         },
         {"intent": "restaurant_search_by_name",
          "utterances": ["I want to eat at mcdonalds", "Search restaurant by name", "I want to eat at Five Guys", "I want to eat at Starbucks",
-                "Chinese restaurants", "American restaurants", "Italian restaurants", "Looking for Chinese food"]
+                "Chinese restaurants", "American restaurants", "Italian restaurants", "I am looking for Chinese food",
+                "I want to eat at a Thai restaurant", "vegan restaurants"]
         },
         {"intent": "restaurant_random_search",
                 "utterances": ["I don't know what to eat", "Where should I go to eat", "I am not sure what I should eat",
-                                "Any recommendations where I should eat?"]
+                                "Any recommendations where I should eat?", "random restaurant"]
                },
         {"intent": "restaurant_null_search",
         "utterances": []

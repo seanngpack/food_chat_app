@@ -38,14 +38,15 @@ class RatingStrategy(IntentStrategy):
         # could not find the restaurant name
         if entity is None:
             return 'Sorry, you are looking for reviews on a restaurant but I \
-            couldn\'t recognize the restaurant name. Don\'t forget to capitalize!'
+            couldn\'t recognize the restaurant name.'
         
         rating_query = db_commands.rating_query(entity)
         # if the restaurant is recognized
         if rating_query is not None:
+            rest_name = star_rating = rating_query[0]['restaurant_name']
             star_rating = rating_query[0]['star_rating'] * '★'
             review_content = rating_query[0]['review_content'][:50] + '...'
-            response = f'{entity} has a an average rating of {star_rating}. \
+            response = f'{rest_name} has a an average rating of {star_rating}. \
                 here is what one customer has to say: {review_content}'
         # if the restaurant is recognized but here's no reviews in the DB
         else:
@@ -97,6 +98,7 @@ class NameStrategy(IntentStrategy):
                 name_query[0]['restaurant_id'])
 
             # rest detail section
+            name = rest_props[0]['restaurant_name']
             location = rest_props[0]['city']
             price = rest_props[0]['price_range']
             rating = rest_props[0]['star_rating'] * '★'
@@ -108,7 +110,7 @@ class NameStrategy(IntentStrategy):
             else:
                 delivery = "don't"
 
-            response = f'Here is some information I have on {entity} ({price},{rating})! \
+            response = f'Here is some information I have on {name} ({price},{rating})! \
                 They are located in {location}, and do deliver. Find out more @ {website}'
 
             return response
