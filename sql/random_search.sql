@@ -1,0 +1,1 @@
+SELECT * FROM restaurant ORDER BY RAND() LIMIT 1;

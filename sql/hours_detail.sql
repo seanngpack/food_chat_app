@@ -1,0 +1,1 @@
+SELECT monday_hours,tuesday_hours,wednesday_hours,thursday_hours,friday_hours FROM hoursAvailable WHERE restaurant_id = %s;

@@ -11,20 +11,21 @@ CREATE TABLE IF NOT EXISTS `restaurant` (
   `reservation` boolean,
   `vegan_option` boolean,
   `delivery_option`     boolean,
-  `website`     VARCHAR(255)
+  `website`     VARCHAR(255),
+  `updated`     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS `user` (
-  `user_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `first_name`  varchar(255) NOT NULL,
-  `last_name`   varchar(255),
-  `city`        varchar(255)
+  `user_id`     varchar(255) NOT NULL PRIMARY KEY,
+  `first_name`  varchar(255) DEFAULT NULL,
+  `last_name`   varchar(255) DEFAULT NULL,
+  `city`        varchar(255) DEFAULT NULL
 );
 
-CREATE TABLE IF NOT EXISTS `messages` (
+CREATE TABLE IF NOT EXISTS `message` (
   `message_id`      int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `user_id`         int(11) NOT NULL,
-  `message_cotent`  varchar(255),
+  `user_id`         varchar(255) NOT NULL,
+  `message_content`  varchar(255),
   FOREIGN KEY(user_id) REFERENCES user(user_id) 
   
 );

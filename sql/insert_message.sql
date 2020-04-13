@@ -1,0 +1,1 @@
+INSERT INTO food_chat_db.message(user_id, message_content) VALUES (%s,%s);

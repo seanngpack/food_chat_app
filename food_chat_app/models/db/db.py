@@ -1,10 +1,11 @@
 from flaskext.mysql import MySQL
+from pymysql.cursors import DictCursor
 import click
 from flask import Flask, request, Response
 from flask import current_app as app
 
 
-db = MySQL()
+db = MySQL(cursorclass=DictCursor)
 
 
 class DB:
@@ -18,7 +19,6 @@ class DB:
             self._cursor = self._conn.cursor()
         except:
             print('ERROR: flask server not loaded')
-        
 
     @property
     def connection(self):

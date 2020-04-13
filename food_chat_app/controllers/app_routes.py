@@ -6,6 +6,8 @@ from food_chat_app.models.nlp.predictor import Predictor
 from food_chat_app.models.nlp.intent_types import IntentType
 from food_chat_app.models.nlp.intent_strategy import *
 from food_chat_app.models.nlp import utils
+from food_chat_app.models.db.commands import insert_user
+from food_chat_app.models.db.commands import insert_message
 
 message_engine = MessageEngine()
 predictor = Predictor()
@@ -49,6 +51,11 @@ def handle_webhook():
         # get a reply to the user message
         reply = message_engine.get_reply(user_id, entity)
         message_engine.post_message(reply)
+
+        # store the user message
+        insert_user(user_id)
+        insert_message(user_id, user_message)
+
         return Response(response="EVENT RECEIVED", status=200)
     return Response(response="EVENT RECEIVED", status=200)
 
@@ -66,8 +73,6 @@ def intent_to_strat(intent: str):
 
     if intent == IntentType.restaurant_proximity_search:
         return ProximityStrategy()
-    elif intent == IntentType.restaurant_food_type_search:
-        return FoodTypeStrategy()
     elif intent == IntentType.restaurant_rating_search:
         return RatingStrategy()
     elif intent == IntentType.restaurant_search_by_name:
@@ -76,5 +81,9 @@ def intent_to_strat(intent: str):
         return RandomStrategy()
     elif intent == IntentType.restaurant_null_search:
         return NullStrategy()
+    elif intent == IntentType.update_database:
+        return UpdateStrategy()
+    elif intent == IntentType.delete:
+        return DeleteStrategy()
     elif intent == IntentType.gratitude:
         return GratitudeStrategy()
