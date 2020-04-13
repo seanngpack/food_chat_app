@@ -35,7 +35,6 @@ class MessageEngine:
                     # if the user sends you a text message
                     if message_text:
                         return user_id, message_text
-                        # return self.handle_message(user_id, message_text)
 
     def get_reply(self, user_id, entity=None):
         '''Run strategy and get a response to the user.

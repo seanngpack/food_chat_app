@@ -31,24 +31,26 @@ def drop_all_tables():
         db.execute(cmd)
 
 
-def upsert_data(csv_file: str):
+def upsert_data(csv_file='data/restaurant_data.csv'):
     '''Inserts data from csv file to the database.
     I guess this basically assumes there's a clean database.
 
     Args:
         csv_file (str): the path to the csv file.
 
+    Returns:
+        Number of rows updated/inserted
+
     '''
 
     df = pd.read_csv(csv_file)
     cleaned_df = df.replace({'Yes': True, 'No': False, 'Null': None})
+    rows = cleaned_df.shape[0]
     # print(cleaned_df[['reservation', 'vegan_option', 'delivery_option']])
     for row in cleaned_df.itertuples(index=True, name='Pandas'):
         review_list = getattr(row, 'reviews').replace('¬†', '').split('>')
         rating_list = getattr(row, 'review_rating').split(', ')
         foodtype_list = getattr(row, 'cusine_types').split(', ')
-        rest_id = db.query('SELECT restaurant_id FROM restaurant WHERE restaurant_name = %s',
-                           getattr(row, 'restaurant_name'))[0]['restaurant_id']
         if getattr(row, 'menu_dishes') is not None:
             dish_list = getattr(row, 'menu_dishes').split(', ')
         else:
@@ -56,12 +58,15 @@ def upsert_data(csv_file: str):
         pop_dishes = _parse_popular(getattr(row, 'popular_dishes'))
 
         upsert_restaurant_table(row)
+        rest_id = db.query('SELECT restaurant_id FROM restaurant WHERE restaurant_name = %s',
+                           getattr(row, 'restaurant_name'))[0]['restaurant_id']
         upsert_review_table(rest_id, review_list, rating_list)
         upsert_food_type_table(foodtype_list, rest_id)
         upsert_hours_table(row, rest_id)
         upsert_menu_table(rest_id)
         upsert_dish_table(dish_list, pop_dishes, rest_id)
-        db.commit()
+    db.commit()
+    return rows
 
 
 def upsert_restaurant_table(params: tuple):
@@ -272,21 +277,39 @@ def rating_query(entity: str):
         return rating_query
 
 
-def user_rating_query(entity: str):
+def vegan_query(entity: str):
+    '''Find a list of vegan restaurants
 
-    '''Find user review and user rating given a restaurant id.
+    Args:
+        Don't really need args for this one
 
-        Args:
-            restaurant name
-
-        Returns:
-            a list of user review and user rating for a restaurant or None if no results
+    Returns:
+        a list of restaurants or None if no results
 
     '''
-    user_rating_query = db.query(get_sql_commands_from_file(
-        'SQL/rating_search.sql')[1], (entity, ))
 
-    if type(user_rating_query) is not list:
+    vegan_query = db.query(get_sql_commands_from_file(
+        'SQL/vegan_search.sql')[0])
+
+    if type(vegan_query) is not list:
         return None
     else:
-        return user_rating_query
+        return vegan_query
+
+
+def insert_user(user_id: str):
+    ''' insert the user to the user table. If exists, then do nothing
+
+    '''
+
+    user_insert = get_sql_commands_from_file('SQL/insert_user.sql')[0]
+    db.execute(user_insert, (user_id,))
+
+
+def insert_message(user_id: str, message: str):
+    '''Store the user message given a user_id and message
+
+    '''
+
+    message_insert = get_sql_commands_from_file('SQL/insert_message.sql')[0]
+    db.execute(message_insert, (user_id, message,))

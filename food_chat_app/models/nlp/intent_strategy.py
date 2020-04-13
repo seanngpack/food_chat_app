@@ -44,7 +44,8 @@ class RatingStrategy(IntentStrategy):
             response = f'{entity} has a an average rating of {star_rating}. \
                 here is what one customer has to say: {review_content}'
         else:
-            return f'Sorry, could not find reviews for {entity}'      
+            return f'Sorry, could not find reviews for {entity}, \
+            so here are some highly reviewed restaurants in Boston'
         return response
 
 
@@ -64,9 +65,18 @@ class NameStrategy(IntentStrategy):
 
             results = ''
             for restaurant in rest_list:
-                # rest_props = db_commands.name_search_query(entity)
-                # rating = rest_props[0]['star_rating'] * '★'
-                # results = results + restaurant + ' ' + rating
+                results += restaurant + ', '
+            response = f'Here are some {entity} restaurants to check out: {results}'
+            return response
+
+        # then check out if they are talking about a vegan restaurant
+        vegan_query = db_commands.vegan_query(entity)
+        if vegan_query is not None:
+            rest_list = [rest['restaurant_name'] for rest in vegan_query]
+            rest_list = rest_list[:3]
+
+            results = ''
+            for restaurant in rest_list:
                 results += restaurant + ', '
             response = f'Here are some {entity} restaurants to check out: {results}'
             return response
@@ -93,7 +103,7 @@ class NameStrategy(IntentStrategy):
 
             return response
         else:
-            return "I couldn't find what you are looking for. Please be more specific and try searching again."
+            return f'I could not find information about {entity}'
 
 
 class RandomStrategy(IntentStrategy):
@@ -123,8 +133,13 @@ class NullStrategy(IntentStrategy):
 
 class UpdateStrategy(IntentStrategy):
     def execute(self, entity):
-        print('update strategy')
-        return 'Updating database with new results...'
+        rest_updated = db_commands.upsert_data()
+        return f'{rest_updated} restaurants updated'
+
+
+class DeleteStrategy(IntentStrategy):
+    def execute(self, entity):
+        return 'deleted records of our conversation...'
 
 
 class GratitudeStrategy(IntentStrategy):
