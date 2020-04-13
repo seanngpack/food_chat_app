@@ -104,6 +104,9 @@ def get_named_entity(chunked):
 
     '''
 
+    # for chunk in chunked:
+    #     print(chunk)
+
     stop_words = ['restaurant', 'restaurants', 'i']
     # for chunk in chunked:
     #     print(chunk)
@@ -115,8 +118,11 @@ def get_named_entity(chunked):
                 return chunk[0][0]
         # backup, if the chunk is a proper noun, singular and not in stop words
         elif chunk[1] == 'NNP':
-            backup = chunk[0]
-        # second choice backup, jut a singular noun
+            return chunk[0]
+        # second choice backup, adjective
+        elif chunk[1] == 'JJ':
+            return chunk[0]
+        # third choice backup, jut a singular noun
         elif chunk[1] == 'NN':
-            backup = chunk[0]
+            return chunk[0]
     return backup

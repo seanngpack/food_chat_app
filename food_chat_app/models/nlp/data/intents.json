@@ -11,7 +11,7 @@
         {"intent": "restaurant_search_by_name",
          "utterances": ["I want to eat at mcdonalds", "Search restaurant by name", "I want to eat at Five Guys", "I want to eat at Starbucks",
                 "Chinese restaurants", "American restaurants", "Italian restaurants", "I am looking for Chinese food",
-                "I want to eat at a Thai restaurant"]
+                "I want to eat at a Thai restaurant", "vegan restaurants"]
         },
         {"intent": "restaurant_random_search",
                 "utterances": ["I don't know what to eat", "Where should I go to eat", "I am not sure what I should eat",
