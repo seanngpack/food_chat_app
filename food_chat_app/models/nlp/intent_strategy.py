@@ -104,7 +104,10 @@ class NameStrategy(IntentStrategy):
             # rest detail section
             name = rest_props[0]['restaurant_name']
             location = rest_props[0]['city']
-            price = int(rest_props[0]['price_range']) * '$'
+            if rest_props[0]['price_range'] is not None:
+                price = int(rest_props[0]['price_range']) * '$'
+            else:
+                price = '$'
             rating = rest_props[0]['star_rating'] * '★'
             delivery = rest_props[0]['delivery_option']
             website = rest_props[0]['website']

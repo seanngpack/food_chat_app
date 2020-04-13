@@ -117,12 +117,13 @@ def get_named_entity(chunked):
             #  print(chunk.label(), ' '.join(c[0] for c in chunk))
                 return chunk[0][0]
         # backup, if the chunk is a proper noun, singular and not in stop words
-        elif chunk[1] == 'NNP':
+        elif chunk[1] == 'NNP' and str.lower(chunk[0]) not in stop_words:
             return chunk[0]
         # second choice backup, adjective
         elif chunk[1] == 'JJ':
             return chunk[0]
         # third choice backup, just a singular noun
-        elif chunk[1] == 'NN' and chunk[0] not in stop_words:
+        elif chunk[1] == 'NN' and str.lower(chunk[0]) not in stop_words:
+            print(chunk[0])
             return chunk[0]
     return backup
