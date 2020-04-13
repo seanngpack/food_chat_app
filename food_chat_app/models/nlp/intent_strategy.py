@@ -38,7 +38,7 @@ class RatingStrategy(IntentStrategy):
         # could not find the restaurant name
         if entity is None:
             return 'Sorry, you are looking for reviews on a restaurant but I \
-            couldn\'t recognize the restaurant name. Don\'t forget to capitalize!'
+            couldn\'t recognize the restaurant name.'
         
         rating_query = db_commands.rating_query(entity)
         # if the restaurant is recognized
