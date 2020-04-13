@@ -25,6 +25,7 @@ class ProximityStrategy(IntentStrategy):
             return f'Sorry, I couldn\'t find restaurants in {entity}'
 
         rest_list = [rest['restaurant_name'] for rest in proximity_query]
+        random.shuffle(rest_list)
         rest_list = rest_list[:3]
         response = f'Here are some restaurants to checkout in {entity}: '
         for restaurant in rest_list:
@@ -72,6 +73,7 @@ class NameStrategy(IntentStrategy):
         # check food type first
         if foodtype_query is not None:
             rest_list = [rest['restaurant_name'] for rest in foodtype_query]
+            random.shuffle(rest_list)
             rest_list = rest_list[:3]
 
             results = ''
@@ -84,6 +86,7 @@ class NameStrategy(IntentStrategy):
         if (str.lower(entity) == 'vegan'):
             vegan_query = db_commands.vegan_query(entity)
             rest_list = [rest['restaurant_name'] for rest in vegan_query]
+            random.shuffle(rest_list)
             rest_list = rest_list[:3]
 
             results = ''

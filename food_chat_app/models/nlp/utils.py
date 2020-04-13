@@ -107,7 +107,7 @@ def get_named_entity(chunked):
     # for chunk in chunked:
     #     print(chunk)
 
-    stop_words = ['restaurant', 'restaurants', 'i']
+    stop_words = ['restaurant', 'restaurants', 'i', 'review', 'reviews']
     # for chunk in chunked:
     #     print(chunk)
     backup = None
