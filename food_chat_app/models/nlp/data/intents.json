@@ -1,7 +1,7 @@
 {"intents": [
         {"intent": "restaurant_proximity_search",
          "utterances": ["Food near me?", "restaurant nearby", "restaurants close to me", "What should I eat that is nearby?", 
-                "I am looking for food close to me", "Restaurants in Boston"]
+                "I am looking for food close to me", "Restaurants in Boston", "restaurants in quincy"]
         },
         {"intent": "restaurant_rating_search",
          "utterances": ["I want to eat at a highly rated restaurant", "highly rated restaurants", "Any good reviewed restaurants?",
