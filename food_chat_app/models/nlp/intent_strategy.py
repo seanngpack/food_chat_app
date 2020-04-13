@@ -70,16 +70,16 @@ class NameStrategy(IntentStrategy):
             return response
 
         # then check out if they are talking about a vegan restaurant
-        vegan_query = db_commands.vegan_query(entity)
-        if vegan_query is not None:
-            rest_list = [rest['restaurant_name'] for rest in vegan_query]
-            rest_list = rest_list[:3]
+        # vegan_query = db_commands.vegan_query(entity)
+        # if vegan_query is not None:
+        #     rest_list = [rest['restaurant_name'] for rest in vegan_query]
+        #     rest_list = rest_list[:3]
 
-            results = ''
-            for restaurant in rest_list:
-                results += restaurant + ', '
-            response = f'Here are some {entity} restaurants to check out: {results}'
-            return response
+        #     results = ''
+        #     for restaurant in rest_list:
+        #         results += restaurant + ', '
+        #     response = f'Here are some {entity} restaurants to check out: {results}'
+        #     return response
 
         # then check is the entity is actually a restaurant name
         elif name_query is not None:

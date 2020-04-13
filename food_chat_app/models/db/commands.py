@@ -304,6 +304,7 @@ def insert_user(user_id: str):
 
     user_insert = get_sql_commands_from_file('SQL/insert_user.sql')[0]
     db.execute(user_insert, (user_id,))
+    db.commit()
 
 
 def insert_message(user_id: str, message: str):
@@ -313,6 +314,7 @@ def insert_message(user_id: str, message: str):
 
     message_insert = get_sql_commands_from_file('SQL/insert_message.sql')[0]
     db.execute(message_insert, (user_id, message,))
+    db.commit()
 
 
 def delete_message():
@@ -321,3 +323,4 @@ def delete_message():
     '''
     delete = get_sql_commands_from_file('SQL/delete_message.sql')[0]
     db.execute(delete, ())
+    db.commit()
