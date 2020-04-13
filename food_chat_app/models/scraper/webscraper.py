@@ -97,6 +97,7 @@ def enter_yelp_page(test_yelp_url):
         pricerange = "Null"
 
     # get reservation info
+    reservation = "Null"
     try:
         r = newsoup.find_all('div', class_=re.compile(
             "lemon--div__373c0__1mboc arrange-unit__373c0__1piwO arrange-unit-fill__373c0__17z0h border-color--default__373c0__2oFDT"))
