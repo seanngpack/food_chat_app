@@ -259,7 +259,7 @@ def review_props_query(entity: str):
 
 
 def rating_query(entity: str):
-    '''Find rating given a restaurant.
+    '''Find a random highly rated restaurant.
 
     Args:
         restaurant name
