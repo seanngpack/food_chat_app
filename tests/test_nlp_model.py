@@ -22,9 +22,11 @@ def test_rating(predictor):
 #     predictor.predict_intent_verbose("I want to eat chinese food")
 
 
-# def test_random(predictor):
-#     predictor.predict_intent_verbose("I don't know where to eat")
-#     predictor.predict_intent_verbose("I am not sure where to eat")
+def test_random(predictor):
+    predictor.predict_intent_verbose("I don't know where to eat")
+    predictor.predict_intent_verbose("I am not sure where to eat")
+    predictor.predict_intent_verbose("I want to eat at a random restaurant")
+    predictor.predict_intent_verbose("I would like a random restaurant")
 
 # def test_update(predictor):
 #     predictor.predict_intent_verbose("refresh the database")

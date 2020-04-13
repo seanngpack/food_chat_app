@@ -18,7 +18,7 @@ class DB:
             self._conn = db.connect()
             self._cursor = self._conn.cursor()
         except:
-            print('ERROR: flask server not loaded')
+            print('ERROR: database not initialized')
 
     @property
     def connection(self):
@@ -33,14 +33,21 @@ class DB:
 
         '''
 
-        self.connection.commit()
+        try:
+            self.connection.commit()
+        except:
+            print('could not commit to DB')
+        
 
     def execute(self, sql, params=None):
         '''Execute the sql command.
 
         '''
 
-        self.cursor.execute(sql, params or ())
+        try:
+            self.cursor.execute(sql, params or ())
+        except:
+            print('could not execute to db')
 
     def fetchall(self):
         '''Fetch the results from your sql command.
