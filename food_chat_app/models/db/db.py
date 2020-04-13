@@ -18,6 +18,7 @@ class DB:
             self._conn = db.connect()
             self._cursor = self._conn.cursor()
         except:
+            app.logger.ERROR('database not initalized, make sure you start up mysql first.')
             print('ERROR: database not initialized')
 
     @property
