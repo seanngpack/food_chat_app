@@ -17,7 +17,7 @@ class ProximityStrategy(IntentStrategy):
         if entity is not None:
             return self._search(entity)
         if entity is None:
-            return self._search('boston')
+            return self._search('Boston')
 
     def _search(self, entity):
         proximity_query = db_commands.proximity_query(entity)
@@ -35,25 +35,35 @@ class ProximityStrategy(IntentStrategy):
 class RatingStrategy(IntentStrategy):
     def execute(self, entity):
         print("rating strat")
-        if entity is None or entity == '':
-            return 'Here are some highly rated restauants in Boston'
+        # could not find the restaurant name
+        if entity is None:
+            return 'Sorry, you are looking for reviews on a restaurant but I \
+            couldn\'t recognize the restaurant name. Don\'t forget to capitalize!'
+        
         rating_query = db_commands.rating_query(entity)
+        # if the restaurant is recognized
         if rating_query is not None:
             star_rating = rating_query[0]['star_rating'] * '★'
             review_content = rating_query[0]['review_content'][:50] + '...'
             response = f'{entity} has a an average rating of {star_rating}. \
                 here is what one customer has to say: {review_content}'
+        # if the restaurant is recognized but here's no reviews in the DB
         else:
+            random_query = db_commands.random_query()[0]
+            name = random_query['restaurant_name']
+            city = random_query['city']
+            rating = random_query['star_rating'] * '★'
             return f'Sorry, could not find reviews for {entity}, \
-            so here are some highly reviewed restaurants in Boston'
+            so here\'s another highly rated restaurant: {name} ({rating}) and it\'s in {city}'
         return response
 
 
 class NameStrategy(IntentStrategy):
     def execute(self, entity):
         print('name strategy')
+
         if entity is None:
-            print('Sorry, please search again')
+            return 'Sorry, you are looking for a restaurant but I could not recognize its name.'
 
         foodtype_query = db_commands.food_type_query(entity)
         name_query = db_commands.name_search_query(entity)
@@ -69,9 +79,9 @@ class NameStrategy(IntentStrategy):
             response = f'Here are some {entity} restaurants to check out: {results}'
             return response
 
-        # then check out if they are talking about a vegan restaurant
-        vegan_query = db_commands.vegan_query(entity)
-        if vegan_query is not None:
+        #then check out if they are talking about a vegan restaurant
+        if (str.lower(entity) == 'vegan'):
+            vegan_query = db_commands.vegan_query(entity)
             rest_list = [rest['restaurant_name'] for rest in vegan_query]
             rest_list = rest_list[:3]
 

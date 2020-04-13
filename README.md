@@ -50,3 +50,7 @@ Be cognizant about these major model characteristics: word frequency is not rewa
 4. Go to ```food_chat_app/models/nlp/intent_strategy.py``` and update with your new intent. 
 
 5. Finally, run ```run_build_nlp.py```
+
+
+### running pytest
+```pytest -s --disable-pytest-warnings```
