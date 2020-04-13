@@ -12,9 +12,9 @@ def predictor():
 #     predictor.predict_intent_verbose('restaurants close to me in Malden')
 
 
-def test_rating(predictor):
-    predictor.predict_intent_verbose("reviews for Toro")
-    predictor.predict_intent_verbose("Highly reviewed restaurants")
+# def test_rating(predictor):
+#     predictor.predict_intent_verbose("reviews for Toro")
+#     predictor.predict_intent_verbose("Highly reviewed restaurants")
 
 
 # def test_name(predictor):

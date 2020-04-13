@@ -14,7 +14,7 @@
         },
         {"intent": "restaurant_random_search",
                 "utterances": ["I don't know what to eat", "Where should I go to eat", "I am not sure what I should eat",
-                                "Any recommendations where I should eat?"]
+                                "Any recommendations where I should eat?", "random restaurant"]
                },
         {"intent": "restaurant_null_search",
         "utterances": []

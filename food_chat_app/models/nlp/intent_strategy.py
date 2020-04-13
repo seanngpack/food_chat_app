@@ -97,6 +97,7 @@ class NameStrategy(IntentStrategy):
                 name_query[0]['restaurant_id'])
 
             # rest detail section
+            name = rest_props[0]['restaurant_name']
             location = rest_props[0]['city']
             price = rest_props[0]['price_range']
             rating = rest_props[0]['star_rating'] * '★'
@@ -108,7 +109,7 @@ class NameStrategy(IntentStrategy):
             else:
                 delivery = "don't"
 
-            response = f'Here is some information I have on {entity} ({price},{rating})! \
+            response = f'Here is some information I have on {name} ({price},{rating})! \
                 They are located in {location}, and do deliver. Find out more @ {website}'
 
             return response
