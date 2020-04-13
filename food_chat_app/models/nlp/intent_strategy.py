@@ -160,6 +160,11 @@ class DeleteStrategy(IntentStrategy):
         db_commands.delete_message()
         return 'deleted records of our conversation...'
 
+class GreetingStrategy(IntentStrategy):
+    def execute(self, entity):
+        print('greeting strat')
+        responses = ['Welcome, ask me food-related questions!', 'Hello there', 'Hi!', 'Greetings, human']
+        return random.choice(responses)
 
 class GratitudeStrategy(IntentStrategy):
     def execute(self, entity):
