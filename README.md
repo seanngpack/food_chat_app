@@ -41,7 +41,7 @@ DB_PASS = "password here"
 
 
 ### Running the application
-1. make sure you have an .env file at the root location with the database and verification tokens inside it.
+1. make sure you have an .env file at the root location with the database and verification tokens inside it. Also make sure you have the database schema built. If not run ```run_build_db.py``` and make sure mysql is running on your computer.
 2. run ```run_server.py``` 
 3. run ```ngrok http 5000 -bind-tls=true``` in your terminal, then copy the https address
 4. go to ```https://developers.facebook.com/apps/1270646319787767/messenger/settings/```
