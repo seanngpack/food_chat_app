@@ -1,6 +1,8 @@
 # food_chat_app
 An application that can be used to find food and restaurants through a chatbot
 
+## m.me/FoodChatApp
+
 
 ## Getting Started
 
