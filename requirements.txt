@@ -20,4 +20,4 @@ tensorflow==2.0.0
 gunicorn
 python-dotenv
 nltk
-keras
+keras==2.3.0
