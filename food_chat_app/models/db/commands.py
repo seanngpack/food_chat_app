@@ -74,7 +74,7 @@ def upsert_restaurant_table(params: tuple):
 
     '''
 
-    rest_insert = get_sql_commands_from_file('SQL/upsert_restaurant.sql')[0]
+    rest_insert = get_sql_commands_from_file('sql/upsert_restaurant.sql')[0]
 
     db.execute(rest_insert, tuple([getattr(params, 'restaurant_name'),
                                    getattr(params, 'city'),
@@ -91,7 +91,7 @@ def upsert_review_table(rest_id: int, review_list: list, rating_list: list):
 
     '''
 
-    review_insert = get_sql_commands_from_file('SQL/upsert_reviews.sql')[0]
+    review_insert = get_sql_commands_from_file('sql/upsert_reviews.sql')[0]
     # insert the reviews
     for i in range(len(review_list)):
         db.execute(review_insert, (rest_id, review_list[i], rating_list[i]))
@@ -101,7 +101,7 @@ def upsert_food_type_table(food_type_list: list, rest_id: int):
     '''Upsert food type table given a list of food types
 
     '''
-    foodtype_insert = get_sql_commands_from_file('SQL/upsert_food_type.sql')[0]
+    foodtype_insert = get_sql_commands_from_file('sql/upsert_food_type.sql')[0]
 
     for i in food_type_list:
         db.execute(foodtype_insert, tuple([rest_id, i]))
@@ -111,7 +111,7 @@ def upsert_hours_table(params: tuple, rest_id: int):
     '''Upsert food type table given a list of food types
 
     '''
-    hours_upsert = get_sql_commands_from_file('SQL/upsert_hours.sql')[0]
+    hours_upsert = get_sql_commands_from_file('sql/upsert_hours.sql')[0]
 
     db.execute(hours_upsert, tuple([rest_id,
                                     getattr(params, 'monday_hours'),
@@ -128,7 +128,7 @@ def upsert_menu_table(rest_id: int):
 
     '''
 
-    menu_insert = get_sql_commands_from_file('SQL/upsert_menu.sql')[0]
+    menu_insert = get_sql_commands_from_file('sql/upsert_menu.sql')[0]
     db.execute(menu_insert, (rest_id))
 
 
@@ -139,7 +139,7 @@ def upsert_dish_table(dish_list: list, pop_dishes: list, rest_id: int):
 
     menu_id = db.query(
         'SELECT menu_id FROM food_chat_db.menu WHERE restaurant_id = %s', rest_id)[0]['menu_id']
-    dish_insert = get_sql_commands_from_file('SQL/upsert_dish.sql')[0]
+    dish_insert = get_sql_commands_from_file('sql/upsert_dish.sql')[0]
 
     if len(dish_list) > 0:
         for i in range(len(dish_list)):
@@ -181,7 +181,7 @@ def proximity_query(entity: str):
     '''
 
     proximity_query = db.query(get_sql_commands_from_file(
-        'SQL/proximity_search.sql')[0], (entity, ))
+        'sql/proximity_search.sql')[0], (entity, ))
 
     if type(proximity_query) is not list:
         return None
@@ -195,7 +195,7 @@ def random_query():
     '''
 
     random_search = db.query(
-        get_sql_commands_from_file('SQL/random_search.sql')[0])
+        get_sql_commands_from_file('sql/random_search.sql')[0])
     if type(random_search) is not list:
         return None
     else:
@@ -211,7 +211,7 @@ def food_type_query(entity: str):
     '''
 
     food_type_query = db.query(get_sql_commands_from_file(
-        'SQL/food_type_search.sql')[0], (entity, ))
+        'sql/food_type_search.sql')[0], (entity, ))
     if type(food_type_query) is not list:
         return None
     else:
@@ -221,7 +221,7 @@ def food_type_query(entity: str):
 def name_search_query(entity: str):
     ''' Finds restaurant id that matches the given name '''
     name_search_query = db.query(get_sql_commands_from_file(
-        'SQL/name_search.sql')[0], (entity, ))
+        'sql/name_search.sql')[0], (entity, ))
     if type(name_search_query) is not list:
         return None
     else:
@@ -231,7 +231,7 @@ def name_search_query(entity: str):
 def rest_props_query(entity: str):
     ''' Finds restaurant details  that matches the given id '''
     rest_props_query = db.query(get_sql_commands_from_file(
-        'SQL/rest_details.sql')[0], (entity, ))
+        'sql/rest_details.sql')[0], (entity, ))
     if type(rest_props_query) is not list:
         return None
     else:
@@ -241,7 +241,7 @@ def rest_props_query(entity: str):
 def hours_props_query(entity: str):
     ''' Finds restaurant hours that matches the given id '''
     hours_props_query = db.query(get_sql_commands_from_file(
-        'SQL/hours_detail.sql')[0], (entity, ))
+        'sql/hours_detail.sql')[0], (entity, ))
     if type(hours_props_query) is not list:
         return None
     else:
@@ -251,7 +251,7 @@ def hours_props_query(entity: str):
 def review_props_query(entity: str):
     ''' Finds restaurant query review info that matches the given id '''
     review_props_query = db.query(get_sql_commands_from_file(
-        'SQL/reviews_details.sql')[0], (entity, ))
+        'sql/reviews_details.sql')[0], (entity, ))
     if type(review_props_query) is not list:
         return None
     else:
@@ -269,7 +269,7 @@ def rating_query(entity: str):
 
     '''
     rating_query = db.query(get_sql_commands_from_file(
-        'SQL/rating_search.sql')[0], (entity, ))
+        'sql/rating_search.sql')[0], (entity, ))
 
     if type(rating_query) is not list:
         return None
@@ -289,7 +289,7 @@ def vegan_query(entity: str):
     '''
 
     vegan_query = db.query(get_sql_commands_from_file(
-        'SQL/vegan_search.sql')[0])
+        'sql/vegan_search.sql')[0])
 
     if type(vegan_query) is not list:
         return None
@@ -302,7 +302,7 @@ def insert_user(user_id: str):
 
     '''
 
-    user_insert = get_sql_commands_from_file('SQL/insert_user.sql')[0]
+    user_insert = get_sql_commands_from_file('sql/insert_user.sql')[0]
     db.execute(user_insert, (user_id,))
     db.commit()
 
@@ -312,7 +312,7 @@ def insert_message(user_id: str, message: str):
 
     '''
 
-    message_insert = get_sql_commands_from_file('SQL/insert_message.sql')[0]
+    message_insert = get_sql_commands_from_file('sql/insert_message.sql')[0]
     db.execute(message_insert, (user_id, message,))
     db.commit()
 
@@ -321,6 +321,6 @@ def delete_message():
     '''Deletes all messages from message table
 
     '''
-    delete = get_sql_commands_from_file('SQL/delete_message.sql')[0]
+    delete = get_sql_commands_from_file('sql/delete_message.sql')[0]
     db.execute(delete, ())
     db.commit()
