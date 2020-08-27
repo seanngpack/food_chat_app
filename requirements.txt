@@ -22,3 +22,4 @@ python-dotenv
 nltk
 keras==2.3.0
 scikit-learn
+pandas
